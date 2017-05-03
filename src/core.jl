@@ -144,7 +144,7 @@ function bulk_register!{S<:AbstractState, T<:Real}(s::Scheduler{S, T},
             end
         else
             for w in who
-                what(x, who[i], x)
+                what(x, w)
             end
         end
     end
