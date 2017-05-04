@@ -3,6 +3,7 @@ using Base.Test
 
 tests = ["core",
          "prioritytime",
+         "queue",
          "../examples/mms_example",
         ]
 
