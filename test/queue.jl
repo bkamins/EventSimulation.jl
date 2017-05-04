@@ -36,8 +36,12 @@ function qfifo(fq, fr)
     go!(s, 6.0)
 end
 
+println("\nExpected output order: (1,1) (2,2) (3,3) (4,4) (5,5) (6,6)")
 qfifo(true, true)
+println("\nExpected output order: (3,1) (2,2) (1,3) (4,4) (5,5) (6,6)")
 qfifo(true, false)
+println("\nExpected output order: (1,1) (2,2) (3,3) (4,8) (5,7) (6,6)")
 qfifo(false, true)
+println("\nExpected output order: (3,1) (2,2) (1,3) (4,8) (5,7) (6,6)")
 qfifo(false, false)
 

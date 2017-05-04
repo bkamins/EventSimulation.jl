@@ -4,6 +4,7 @@ using Base.Test
 tests = ["core",
          "prioritytime",
          "queue",
+         "resource",
          "../examples/mms_example",
         ]
 
