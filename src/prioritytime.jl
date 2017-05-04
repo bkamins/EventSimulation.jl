@@ -1,4 +1,4 @@
-import Base: +, -, ==, <, <=, zero, convert, hash, promote_rule
+import Base: +, -, ==, <, <=, convert, hash, promote_rule
 
 """
 Subtype of `Real` defining a lexicographically comparable pair of `Real`.
@@ -11,7 +11,7 @@ but both have to be subtypes of `Real`.
 have the same time. Two actions with identical `time` and `priority`
 have undefined oreder of execution so this should be avoided.
 
-`PriorityTime` type has defined lexicographic order and `+`, `-` and `zero`.
+`PriorityTime` type has defined lexicographic order and `+`, `-`.
 It is immutable, has a custom `hash` function and conversions from `Real` types.
 """
 immutable PriorityTime{T1<:Real, T2<:Real}<:Real
@@ -25,10 +25,6 @@ end
 Construct `PriorityTime` with `priority` randomly generated using `rand()`.
 """
 PriorityTime{T1<:Real}(time::T1) = PriorityTime{T1,Float64}(time, rand())
-
-function zero{T1<:Real,T2<:Real}(x::PriorityTime{T1,T2})
-    PriorityTime{T1,T2}(zero(T1), zero(T2))
-end
 
 # need to define conversion from PriorityTime to PriorityTime to avoid recursion
 # as PriorityTime is a subtype of Real
