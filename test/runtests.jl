@@ -3,6 +3,7 @@ using Base.Test
 
 tests = ["core",
          "prioritytime",
+         "../examples/mms_example",
         ]
 
 println("Running tests:")
