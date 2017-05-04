@@ -1,6 +1,12 @@
 using EventSimulation
 using Base.Test
 
+# Objectives of the example:
+# * show how Queue and Resource objects can be used
+# * show that Queue gives a fine grained control than Resource
+#   but is more expensive (actually Resource use is a hack)
+# * show how MersenneTwister with randjump can be used to control RNG streams
+
 # exact formula for M/M/s queue
 function run_mms_exact(ar, sr, s)
     ρ = ar/sr
