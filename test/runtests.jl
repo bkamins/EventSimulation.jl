@@ -2,6 +2,7 @@ using EventSimulation
 using Base.Test
 
 tests = ["core",
+         "prioritytime",
         ]
 
 println("Running tests:")
