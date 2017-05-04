@@ -69,7 +69,8 @@ function provide!{Q<:Real, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, r::Reso
     startq = r.quantity
     # we do not want to oveflow the container, but allow large provisions
     r.quantity = clamp(startq+quantity, r.lo, r.hi)
+    added = r.quantity - startq
     dispatch!(s, r)
-    return r.quantity - startq # return how much was added
+    return added # return how much was added
 end
 
