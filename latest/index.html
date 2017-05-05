@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Event based Discrete Event Simulator">
+  <meta name="author" content="Bogumił Kamiński">
+  <link rel="shortcut icon" href="./img/favicon.ico">
+  <title>Home - EventSimulation.jl</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  <link href="./assets/Documenter.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Home";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/";
+  </script>
+  
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> EventSimulation.jl</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">Home</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#eventsimulationjl">EventSimulation.jl</a></li>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">EventSimulation.jl</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/bkamins/EventSimulation.jl/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p><a id='EventSimulation.jl-1'></a></p>
+<h1 id="eventsimulationjl">EventSimulation.jl</h1>
+<p><em>An event based Discrete Event Simulation engine</em></p>
+<p><a id='EventSimulation' href='#EventSimulation'>#</a>
+<strong><code>EventSimulation</code></strong> &mdash; <em>Module</em>.</p>
+<p>EventSimulation is an event-based discrete event simulation engine.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/EventSimulation.jl#L3-L5' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.AbstractState' href='#EventSimulation.AbstractState'>#</a>
+<strong><code>EventSimulation.AbstractState</code></strong> &mdash; <em>Type</em>.</p>
+<p>Abstract type for holding state of the simulation</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L63-L65' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.EmptyState' href='#EventSimulation.EmptyState'>#</a>
+<strong><code>EventSimulation.EmptyState</code></strong> &mdash; <em>Type</em>.</p>
+<p>Simplest concrete type implementing <code>AbstractState</code> that does not hold any data</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L68-L71' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.Scheduler' href='#EventSimulation.Scheduler'>#</a>
+<strong><code>EventSimulation.Scheduler</code></strong> &mdash; <em>Type</em>.</p>
+<p>Holds information about current simulation state Contains three fields:</p>
+<ul>
+<li><code>now</code>         current simulation time</li>
+<li><code>event_queue</code> priority queue of <code>Actions</code> planned to be executed</li>
+<li><code>state</code>       user defined subtype of <code>AbstractState</code> of the simulation</li>
+</ul>
+<p>If two <code>Action</code>s have identical <code>when</code> time in <code>event_queue</code> then the order of their execution is undefined</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L75-L84' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.register!' href='#EventSimulation.register!'>#</a>
+<strong><code>EventSimulation.register!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>register!(s, what, Δ)
+</code></pre>
+
+<p>Put <code>what</code> at time <code>s.now+Δ</code> to <code>s.event_queue</code>. <code>what</code> must accept exactly one argument of type <code>Scheduler</code></p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L108-L113' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.repeat_register!' href='#EventSimulation.repeat_register!'>#</a>
+<strong><code>EventSimulation.repeat_register!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>repeat_register!(s, what, interval)
+</code></pre>
+
+<p>Put <code>what</code> to <code>s.event_queue</code> repeatedly in time intervals specified by <code>interval</code> function, which must accept one argument of type <code>Scheduler</code> <code>what</code> must accept exactly one argument of type <code>Scheduler</code></p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L121-L127' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.bulk_register!' href='#EventSimulation.bulk_register!'>#</a>
+<strong><code>EventSimulation.bulk_register!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>bulk_register!(s, who, what, Δ, randomize)
+</code></pre>
+
+<p>Put event at time <code>s.now+Δ</code> to <code>s.event_queue</code> that will execute <code>what(scheduler, w)</code> for all <code>w</code> in <code>who</code>. If <code>randomize</code> is <code>false</code> then <code>who</code> is traversed in natural order otherwise it is traversed in random order.</p>
+<p><code>what</code> must accept exactly tow arguments of type <code>Scheduler</code> and <code>typeof(who)</code></p>
+<p>Function is designed to efficiently handle case when the same action has to be executed at the same simulation time by many agents.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L136-L148' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.repeat_bulk_register!' href='#EventSimulation.repeat_bulk_register!'>#</a>
+<strong><code>EventSimulation.repeat_bulk_register!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>repeat_bulk_register!(s, who, what, Δ, randomize)
+</code></pre>
+
+<p>Repeat <code>bulk_register!</code> at time intervals specified by <code>interval</code>, which must accept <code>Scheduler</code> argument. <code>what</code> must accept exactly tow arguments of type <code>Scheduler</code> and <code>typeof(who)</code></p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L168-L174' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.terminate!' href='#EventSimulation.terminate!'>#</a>
+<strong><code>EventSimulation.terminate!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>terminate!(s)
+</code></pre>
+
+<p>Empties <code>s.event_queue</code> which will lead to termination of simulation unless it is refilled before execution returns to <code>go!</code>. Useful for event-triggered termination of simulation</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L193-L199' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.go!' href='#EventSimulation.go!'>#</a>
+<strong><code>EventSimulation.go!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>go!(s, until)
+</code></pre>
+
+<p>Runs simulation defined by <code>s</code> until <code>s.now</code> is greater or equal than <code>until</code> or <code>s.event_queue</code> is empty (i.e. nothing is left to be done).</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/core.jl#L204-L209' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.Resource' href='#EventSimulation.Resource'>#</a>
+<strong><code>EventSimulation.Resource</code></strong> &mdash; <em>Type</em>.</p>
+<p>Resource type for holding numeric values (like amount of liquid). It stores current <code>quantity</code> of matter and its allowed <code>lo</code> and <code>hi</code> amounts. Servers can get objects from the queue with optional maximum number of requests pending for fulfillment.</p>
+<p>Fields:</p>
+<ul>
+<li><code>quantiy</code>    current quantity in resource</li>
+<li><code>lo</code>            minimum quantity of resource</li>
+<li><code>hi</code>            maximum quantity of resource</li>
+<li><code>fifo_requests</code> if <code>true</code> <code>requests</code> is fifo, otherwise lifo</li>
+<li><code>max_requests</code>  maximum <code>requests</code> size</li>
+<li><code>requests</code>      vector of request and requested quantity</li>
+</ul>
+<p>Functions in <code>requests</code> must accept one argument <code>Scheduler</code>, so they should know the amount they requested. When resource arrives to a queue there is a try to immediately dispatch it to pending requests. When new request arrives there is a try to immediately fulfill it.</p>
+<p>Initially an empty <code>Resource</code> with no requests is constructed. Initial <code>quantity</code>, <code>lo</code> and <code>hi</code> may be provided. By default <code>Resource</code> is empty, and has minimum quantity of zero and unbounded maximum.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/resource.jl#L9-L32' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.Queue' href='#EventSimulation.Queue'>#</a>
+<strong><code>EventSimulation.Queue</code></strong> &mdash; <em>Type</em>.</p>
+<p>Queue type for holding arbitrary objects <code>O</code>. It allows objects to be waiting in a queue with optional maximum queue size. Servers can get objects from the queue with optional maximum number of requests pending for fulfillment.</p>
+<p>Fields:</p>
+<ul>
+<li><code>fifo_queue</code>    if <code>true</code> <code>queue</code> is fifo, otherwise lifo</li>
+<li><code>max_queue</code>     maximum <code>queue</code> size</li>
+<li><code>queue</code>         vector of objects in a queue</li>
+<li><code>fifo_requests</code> if <code>true</code> <code>requests</code> is fifo, otherwise lifo</li>
+<li><code>max_requests</code>  maximum <code>requests</code> size</li>
+<li><code>requests</code>      vector of request functions</li>
+</ul>
+<p>Functions in <code>requests</code> must accept two arguments <code>Scheduler</code> and <code>O</code>. When <code>O</code> arrives to a queue there is a try to immediately dispatch it to pending requests. When new request arrives there is a try to immediately provide it with <code>O</code>.</p>
+<p>Initially an empty <code>Queue</code> with no requests is constructed. By default <code>queue</code> and <code>requests</code> have fifo policy and are unbounded.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/queue.jl#L1-L22' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.request!' href='#EventSimulation.request!'>#</a>
+<strong><code>EventSimulation.request!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>request!(s, r, quantity, request)
+request!(s, q, request)
+</code></pre>
+
+<p>Function used to register request for resource in <code>Resourse</code> or object from `Queue.</p>
+<p>Returns <code>true</code> if successfull and <code>false</code> when too many requests were made.</p>
+<p>In <code>Resource</code> requested <code>quantity</code> must be provided and <code>request</code> accepts only <code>Scheduler</code> argument (it must know what it wanted).</p>
+<p>In <code>Queue</code> function <code>request</code> must accept two arguments <code>Scheduler</code> and object.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/EventSimulation.jl#L33-L46' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.provide!' href='#EventSimulation.provide!'>#</a>
+<strong><code>EventSimulation.provide!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>provide!(s, r, quantity)
+provide!(s, q, object)
+</code></pre>
+
+<p>Allows to fill <code>Resource</code> with <code>quantity</code> or <code>Queue</code> with <code>object</code>.</p>
+<p>In <code>Resource</code> changes the balance of <code>r.quantity</code>. Given quantity may be any number, but the balance of <code>Resource</code> will be changed only in <code>lo</code>-<code>hi</code> range. Returns the actual change in <code>Resource</code> balance.</p>
+<p>In <code>Queue</code> adds <code>object</code> to <code>q.queue</code>. Returns <code>true</code> on success and <code>false</code> if there were too many objects in queue already.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/EventSimulation.jl#L50-L62' class='documenter-source'>source</a><br></p>
+<p><a id='EventSimulation.PriorityTime' href='#EventSimulation.PriorityTime'>#</a>
+<strong><code>EventSimulation.PriorityTime</code></strong> &mdash; <em>Type</em>.</p>
+<p>Subtype of <code>Real</code> defining a lexicographically comparable pair of <code>Real</code>. It is designed to be used by <code>Scheduler</code> where standard real numbers run to a problem of undefined order of undefined order of removal from priority queue.</p>
+<p><code>PriorityTime</code> two fields <code>time</code> and <code>priority</code> which may have different types, but both have to be subtypes of <code>Real</code>. <code>priority</code> should be used to determine order of execution of <code>Action</code>s that have the same time. Two actions with identical <code>time</code> and <code>priority</code> have undefined oreder of execution so this should be avoided.</p>
+<p><code>PriorityTime</code> type has defined lexicographic order and <code>+</code>, <code>-</code>. It is immutable, has a custom <code>hash</code> function and conversions from <code>Real</code> types.</p>
+<p><a target='_blank' href='https://github.com/bkamins/EventSimulation.jl/tree/484d81e065598a595caa4b87c20a6a9aaf6e7ee0/src/prioritytime.jl#L3-L16' class='documenter-source'>source</a><br></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/bkamins/EventSimulation.jl" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+    </span>
+</div>
+    <script src="./js/theme.js"></script>
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="./assets/mathjaxhelper.js"></script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 0.16.3
+Build Date UTC : 2017-05-05 15:25:59
+-->
