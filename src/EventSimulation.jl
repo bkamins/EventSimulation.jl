@@ -7,7 +7,9 @@ module EventSimulation
 
 export # core.jl
        AbstractState, EmptyState, Scheduler,
-       register!, repeat_register!, bulk_register!, terminate!, go!,
+       register!, repeat_register!,
+       bulk_register!, repeat_bulk_register!,
+       terminate!, go!,
 
        # resource.jl, queue.jl
        Resource, Queue, request!, provide!,

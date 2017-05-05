@@ -63,3 +63,24 @@ for x in randperm(4)
 end
 go!(s, 11)
 
+println("Testing ordered repeat_bulk_register!")
+s = Scheduler()
+v2 = []
+who = [1:5;]
+repeat_bulk_register!(s, who, (a,b) -> push!(v2, (s.now, b)), x -> 1.0, false)
+go!(s, 10)
+v2t = []
+for i in 1.0:10.0, j in 1:5
+    push!(v2t, (i, j))
+end
+
+@test v2 == v2t
+
+println("Testing random repeat_bulk_register!. Visual inspection required.")
+println("First element of tuple should be ordered, second should be in random order")
+s = Scheduler()
+v2 = []
+who = [1:5;]
+repeat_bulk_register!(s, who, (a,b) -> println((s.now, b)), x -> 1.0, true)
+go!(s, 4)
+

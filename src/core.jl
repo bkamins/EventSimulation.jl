@@ -128,14 +128,13 @@ Put `what` to `s.event_queue` repeatedly in time intervals specified by
 function repeat_register!(s::Scheduler, what::Function, interval::Function)
     function wrap_what(x)
         what(x)
-        when = x.now + interval(x)
-        pq_insert!(x.event_queue, wrap_what, when)
+        register!(x, wrap_what, interval(x))
     end
-    pq_insert!(s.event_queue, wrap_what, s.now + interval(s))
+    register!(s, wrap_what, interval(s))
 end
 
 """
-    bulk_register!(s, what, Δ, randomize)
+    bulk_register!(s, who, what, Δ, randomize)
 
 Put event at time `s.now+Δ` to `s.event_queue`
 that will execute `what(scheduler, w)` for all `w` in `who`.
@@ -163,10 +162,34 @@ function bulk_register!{S<:AbstractState, T<:Real}(s::Scheduler{S, T},
             end
         end
     end
-
     register!(s, bulk_what, Δ)
 end
 
+"""
+    repeat_bulk_register!(s, who, what, Δ, randomize)
+
+Repeat `bulk_register!` at time intervals specified by `interval`,
+which must accept `Scheduler` argument.
+`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`
+"""
+function repeat_bulk_register!(s::Scheduler, who::AbstractVector,
+                               what::Function,
+                               interval::Function,
+                               randomize::Bool=false)
+    function wrap_bulk_what(x)
+        if randomize
+            for i in randperm(length(who))
+                what(x, who[i])
+            end
+        else
+            for w in who
+                what(x, w)
+            end
+        end
+        register!(x, wrap_bulk_what, interval(x))
+    end
+    register!(s, wrap_bulk_what, interval(s))
+end
 """
     terminate!(s)
 
