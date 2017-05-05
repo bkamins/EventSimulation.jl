@@ -105,7 +105,6 @@ function Scheduler{R<:Real}(state = EmptyState(); T::Type{R} = Float64)
     Scheduler(zero(T), Vector{Action{T}}(), state)
 end
 
-# plan to do `what` in `Δ` time from `now` in scheduler `s`
 """
     register!(s, what, Δ)
 
@@ -117,6 +116,22 @@ function register!{S<:AbstractState, T<:Real}(s::Scheduler{S, T},
                                               Δ::T = zero(T))
     when = s.now + Δ
     pq_insert!(s.event_queue, what, when)
+end
+
+"""
+    repeat_register!(s, what, interval)
+
+Put `what` to `s.event_queue` repeatedly in time intervals specified by
+`interval` function, which must accept one argument of type `Scheduler`
+`what` must accept exactly one argument of type `Scheduler`
+"""
+function repeat_register!(s::Scheduler, what::Function, interval::Function)
+    function wrap_what(x)
+        what(x)
+        when = x.now + interval(x)
+        pq_insert!(x.event_queue, wrap_what, when)
+    end
+    pq_insert!(s.event_queue, wrap_what, s.now + interval(s))
 end
 
 """

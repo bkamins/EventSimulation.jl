@@ -28,6 +28,16 @@ end
 terminate!(s)
 @test length(s.event_queue) == 0
 
+
+println("Testing repeat_register!")
+s = Scheduler()
+rrv = []
+f(x) = push!(rrv, x.now)
+ifun(x) = x.now + 1
+repeat_register!(s, f, ifun)
+go!(s, 50)
+@test rrv == [1,3,7,15,31,63]
+
 println("Testing ordered bulk_register!")
 s = Scheduler()
 v2 = []

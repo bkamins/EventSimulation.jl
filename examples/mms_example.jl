@@ -18,13 +18,13 @@ end
 # hardcoded M/M/1 queue
 function run_mm1_fast(until, ar, sr, seed)
     tic()
+    ma, ms = randjump(MersenneTwister(seed), 2)
     queue = Vector{Float64}()
-    nextArrival = 0.0
+    nextArrival = randexp(ma) / ar
     nextDeparture = Inf
     totalWait = 0.0
     totalCount = 0
     now = 0.0
-    ma, ms = randjump(MersenneTwister(seed), 2)
     msg = String[]
     while now < until
         if nextArrival < nextDeparture
@@ -69,7 +69,6 @@ type StateQ <: AbstractState
 end
 
 function arrivalQ!(s::Scheduler)
-    register!(s, arrivalQ!, randexp(s.state.ma) / s.state.ar)
     push!(s.state.msg, "A $(s.now)")
     provide!(s, s.state.q, s.now)
 end
@@ -88,7 +87,7 @@ end
 function run_mms_queue(until, ar, sr, count)
     tic()
     s = Scheduler(StateQ(ar, sr))
-    register!(s, arrivalQ!)
+    repeat_register!(s, arrivalQ!, x -> randexp(x.state.ma) / x.state.ar)
     for i in 1:count
         request!(s, s.state.q, startserviceQ!)
     end
@@ -139,7 +138,7 @@ end
 function run_mms_resource(until, ar, sr, count)
     tic()
     s = Scheduler(StateR(ar, sr))
-    register!(s, arrivalR!)
+    register!(s, arrivalR!, randexp(s.state.ma) / s.state.ar)
     for i in 1:count
         request!(s, s.state.r, 1, startserviceR!)
     end
