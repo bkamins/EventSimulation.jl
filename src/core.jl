@@ -169,7 +169,7 @@ end
 Runs simulation defined by `s` until `s.now` is greater or equal than `until`
 or `s.event_queue` is empty (i.e. nothing is left to be done).
 """
-function go!(s::Scheduler, until)
+function go!(s::Scheduler, until::Real)
     while s.now < until && !isempty(s.event_queue)
         a = pq_remove!(s.event_queue)
         s.now = a.when
