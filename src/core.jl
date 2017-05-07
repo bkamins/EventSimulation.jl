@@ -197,9 +197,9 @@ end
 """
     interrupt!(s, a)
 
-    First occurence of action `a` is replaced by no-op in event queue.
-    This way there is no need to fix heap in this operation and it is fast.
-    Returns `true` if `a` was found in queue and `false` otherwise.
+First occurence of action `a` is replaced by no-op in event queue.
+This way there is no need to fix heap in this operation and it is fast.
+Returns `true` if `a` was found in queue and `false` otherwise.
 """
 function interrupt!(s::Scheduler, a::Action)
     i = findfirst(s.event_queue, a)
