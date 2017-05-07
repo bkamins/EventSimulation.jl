@@ -109,7 +109,8 @@ end
     register!(s, what, Δ)
 
 Put `what` at time `s.now+Δ` to `s.event_queue`.
-`what` must accept exactly one argument of type `Scheduler`
+`what` must accept exactly one argument of type `Scheduler`.
+Returns inserted `Action`.
 """
 function register!{S<:AbstractState, T<:Real}(s::Scheduler{S, T},
                                               what::Function,
@@ -122,8 +123,9 @@ end
     repeat_register!(s, what, interval)
 
 Put `what` to `s.event_queue` repeatedly in time intervals specified by
-`interval` function, which must accept one argument of type `Scheduler`
-`what` must accept exactly one argument of type `Scheduler`
+`interval` function, which must accept one argument of type `Scheduler`.
+`what` must accept exactly one argument of type `Scheduler`.
+Returns first inserted `Action`.
 """
 function repeat_register!(s::Scheduler, what::Function, interval::Function)
     function wrap_what(x)
@@ -140,8 +142,8 @@ Put event at time `s.now+Δ` to `s.event_queue`
 that will execute `what(scheduler, w)` for all `w` in `who`.
 If `randomize` is `false` then `who` is traversed in natural order
 otherwise it is traversed in random order.
-
-`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`
+`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`.
+Returns inserted bulk `Action`.
 
 Function is designed to efficiently handle case when the same action
 has to be executed at the same simulation time by many agents.
@@ -170,7 +172,8 @@ end
 
 Repeat `bulk_register!` at time intervals specified by `interval`,
 which must accept `Scheduler` argument.
-`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`
+`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`.
+Returns first inserted bulk `Action`.
 """
 function repeat_bulk_register!(s::Scheduler, who::AbstractVector,
                                what::Function,
@@ -190,6 +193,21 @@ function repeat_bulk_register!(s::Scheduler, who::AbstractVector,
     end
     register!(s, wrap_bulk_what, interval(s))
 end
+
+"""
+    interrupt!(s, a)
+
+    First occurence of action `a` is replaced by no-op in event queue.
+    This way there is no need to fix heap in this operation and it is fast.
+    Returns `true` if `a` was found in queue and `false` otherwise.
+"""
+function interrupt!(s::Scheduler, a::Action)
+    i = findfirst(s.event_queue, a)
+    i == 0 && return false
+    s.event_queue[i] = Action(x -> nothing, s.event_queue[i].when)
+    return true
+end
+
 """
     terminate!(s)
 
