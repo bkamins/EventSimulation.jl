@@ -56,6 +56,13 @@ function request!(s::Scheduler, q::Queue, request::Function)
     return true
 end
 
+function waive!(q::Queue, request::Function)
+    idx = findfirst(q.requests, request)
+    idx == 0 && return false
+    deleteat!(q.requests, idx)
+    return true
+end
+
 function provide!{O}(s::Scheduler, q::Queue{O}, object::O)
     if length(q.queue) < q.max_queue
         qend = q.fifo_queue ? unshift! : push!

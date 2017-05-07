@@ -12,14 +12,21 @@ export # core.jl
        interrupt!, terminate!, go!,
 
        # resource.jl, queue.jl
-       AbstractReservoir, waive!, # defined in this file
-       Resource, Queue, request!, provide!, withdraw!,
+       AbstractReservoir, # defined in this file
+       ResourceRequest, Resource, Queue,
+       request!, waive!, provide!, withdraw!,
 
        # prioritytime.jl
        PriorityTime
 
 
 include("core.jl")
+
+"""
+Abstract class for reservoirs.
+`Queue` and `Resource` are concrete types implementing it.
+"""
+abstract AbstractReservoir
 
 """
     dispatch!(s, r)
@@ -37,14 +44,29 @@ function dispatch! end
 Function used to register request for resource in `Resourse`
 or object from `Queue.
 
-Returns `true` if successfull and `false` when too many requests were made.
 
 In `Resource` requested `quantity` must be provided and
 `request` accepts only `Scheduler` argument (it must know what it wanted).
+Returns tuple of:
+* `true` if successfull and `false` when too many requests were made
+* `ResourceRequest` object created
 
 In `Queue` function `request` must accept two arguments `Scheduler` and object.
+Returns `true` if successfull and `false` when too many requests were made.
 """
 function request! end
+
+"""
+    waive!(r, res_request)
+    waive!(q, request)
+
+Allows to remove first occurence that would be served
+of `res_request` from `Resource` or `request` from `Queue`.
+
+Returns `true` on success and `false` if `res_request`
+or `request` respectively was not found.
+"""
+function waive! end
 
 """
     provide!(s, r, quantity)
@@ -60,30 +82,6 @@ In `Queue` adds `object` to `q.queue`. Returns `true` on success and
 `false` if there were too many objects in queue already.
 """
 function provide! end
-
-"""
-Abstract class for reservoirs.
-`Queue` and `Resource` are concrete types implementing it.
-It is assumed that all concrete types must have
-field `requests::Vector{Function}`.
-"""
-abstract AbstractReservoir
-
-"""
-    waive!(q, object)
-
-Allows to remove first occurence that would be served
-of `request` from `AbstractReservoir`.
-
-Returns `true` on success and `false` if `request` was not found.
-"""
-function waive!(q::AbstractReservoir, request::Function)
-    idx = findfirst(q.requests, request)
-    idx == 0 && return false
-    deleteat!(q.requests, idx)
-    return true
-end
-
 
 include("resource.jl")
 include("queue.jl")

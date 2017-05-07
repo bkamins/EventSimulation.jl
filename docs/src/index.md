@@ -16,6 +16,7 @@ interrupt!
 terminate!
 go!
 AbstractReservoir
+ResourceRequest
 Resource
 Queue
 request!

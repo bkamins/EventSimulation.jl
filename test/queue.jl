@@ -45,5 +45,42 @@ qfifo(false, true)
 println("\nExpected output order: (3,1) (2,2) (1,3) (4,8) (5,7) (6,6)")
 qfifo(false, false)
 
-# TODO: add withdraw! and waive! test
+
+println("Queue waive! test")
+s = Scheduler()
+q = Queue{Int}()
+@test !waive!(q, identity)
+
+f1 = x -> println(1)
+f2 = x -> println(2)
+f3 = x -> println(3)
+request!(s, q, f1)
+request!(s, q, f2)
+request!(s, q, f3)
+
+@test length(q.requests) == 3
+@test waive!(q, f2)
+@test length(q.requests) == 2
+@test !waive!(q, f2)
+@test waive!(q, f1)
+@test waive!(q, f3)
+@test isempty(q.requests)
+
+println("Queue withdraw! test")
+
+s = Scheduler()
+q = Queue{Int}()
+@test !withdraw!(q, 1)
+
+provide!(s, q, 1)
+provide!(s, q, 2)
+provide!(s, q, 3)
+
+@test length(q.queue) == 3
+@test withdraw!(q, 2)
+@test length(q.queue) == 2
+@test !withdraw!(q, 2)
+@test withdraw!(q, 1)
+@test withdraw!(q, 3)
+@test isempty(q.queue)
 

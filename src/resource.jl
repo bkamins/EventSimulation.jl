@@ -1,7 +1,7 @@
 """
 Internal structure that remembers that `quantity` was requested by `request`.
 """
-immutable ResourceRequest{Q<:Real} <: AbstractReservoir
+immutable ResourceRequest{Q<:Real}
     quantity::Q
     request::Function
 end
@@ -30,7 +30,7 @@ Initially an empty `Resource` with no requests is constructed.
 Initial `quantity`, `lo` and `hi` may be provided. By default `Resource` is
 empty, and has minimum quantity of zero and unbounded maximum.
 """
-type Resource{Q<:Real}
+type Resource{Q<:Real} <: AbstractReservoir
     quantity::Q
     lo::Q
     hi::Q
@@ -59,10 +59,18 @@ end
 
 function request!{Q<:Real}(s::Scheduler, r::Resource{Q}, quantity::Q,
                            request::Function)
-    length(r.requests) < r.max_requests || return false
+    rr = ResourceRequest{Q}(quantity, request)
+    length(r.requests) < r.max_requests || return false, rr
     qend = r.fifo_requests ? unshift! : push!
-    qend(r.requests, ResourceRequest{Q}(quantity, request))
+    qend(r.requests, rr)
     dispatch!(s, r)
+    return true, rr
+end
+
+function waive!{Q<:Real}(r::Resource{Q}, res_request::ResourceRequest{Q})
+    idx = findfirst(r.requests, res_request)
+    idx == 0 && return false
+    deleteat!(r.requests, idx)
     return true
 end
 
