@@ -9,7 +9,7 @@ export # core.jl
        AbstractState, EmptyState, Scheduler,
        register!, repeat_register!,
        bulk_register!, repeat_bulk_register!,
-       terminate!, go!,
+       interrupt!, terminate!, go!,
 
        # resource.jl, queue.jl
        Resource, Queue, request!, provide!,

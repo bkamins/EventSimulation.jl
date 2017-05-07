@@ -84,3 +84,23 @@ who = [1:5;]
 repeat_bulk_register!(s, who, (a,b) -> println((s.now, b)), x -> 1.0, true)
 go!(s, 4)
 
+
+println("Testing interrupt.")
+
+s = Scheduler()
+@test interrupt!(s, EventSimulation.Action(identity, 1.0)) == false
+for i in 1:10
+    register!(s, identity, rand())
+end
+
+OK = true
+a = register!(s, x -> begin global OK = false; println("Failed") end, rand())
+
+for i in 1:10
+    register!(s, identity, rand())
+end
+
+@test interrupt!(s, a) == true
+go!(s, 1.0)
+@test OK
+
