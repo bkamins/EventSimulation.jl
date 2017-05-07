@@ -75,5 +75,3 @@ function provide!{Q<:Real}(s::Scheduler, r::Resource{Q}, quantity::Q)
     return added # return how much was added
 end
 
-# TODO: add removal from requests - unrequest
-

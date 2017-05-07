@@ -12,8 +12,8 @@ export # core.jl
        interrupt!, terminate!, go!,
 
        # resource.jl, queue.jl
-       AbstractReservoir, waive! # defined in this file
-       Resource, Queue, request!, provide!, withdraw!
+       AbstractReservoir, waive!, # defined in this file
+       Resource, Queue, request!, provide!, withdraw!,
 
        # prioritytime.jl
        PriorityTime
