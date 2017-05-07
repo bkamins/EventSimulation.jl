@@ -6,7 +6,7 @@ EventSimulation is an event-based discrete event simulation engine.
 module EventSimulation
 
 export # core.jl
-       AbstractState, EmptyState, Scheduler,
+       Action, AbstractState, EmptyState, Scheduler,
        register!, repeat_register!,
        bulk_register!, repeat_bulk_register!,
        interrupt!, terminate!, go!,
