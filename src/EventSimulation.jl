@@ -12,7 +12,8 @@ export # core.jl
        interrupt!, terminate!, go!,
 
        # resource.jl, queue.jl
-       Resource, Queue, request!, provide!,
+       AbstractReservoir, waive! # defined in this file
+       Resource, Queue, request!, provide!, withdraw!
 
        # prioritytime.jl
        PriorityTime
@@ -28,7 +29,6 @@ Internal function used for dispatching requests in `Resource` and `Queue`.
 Puts appropriate `Action`s in `s` immediately.
 """
 function dispatch! end
-
 
 """
     request!(s, r, quantity, request)
@@ -46,7 +46,6 @@ In `Queue` function `request` must accept two arguments `Scheduler` and object.
 """
 function request! end
 
-
 """
     provide!(s, r, quantity)
     provide!(s, q, object)
@@ -61,6 +60,30 @@ In `Queue` adds `object` to `q.queue`. Returns `true` on success and
 `false` if there were too many objects in queue already.
 """
 function provide! end
+
+"""
+Abstract class for reservoirs.
+`Queue` and `Resource` are concrete types implementing it.
+It is assumed that all concrete types must have
+field `requests::Vector{Function}`.
+"""
+abstract AbstractReservoir
+
+"""
+    waive!(q, object)
+
+Allows to remove first occurence that would be served
+of `request` from `AbstractReservoir`.
+
+Returns `true` on success and `false` if `request` was not found.
+"""
+function waive!(q::AbstractReservoir, request::Function)
+    idx = findfirst(q.requests, request)
+    idx == 0 && return false
+    deleteat!(q.requests, idx)
+    return true
+end
+
 
 include("resource.jl")
 include("queue.jl")

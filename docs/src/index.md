@@ -15,9 +15,12 @@ repeat_bulk_register!
 interrupt!
 terminate!
 go!
+AbstractReservoir
 Resource
 Queue
 request!
+waive!
 provide!
+withdraw!
 PriorityTime
 ```

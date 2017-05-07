@@ -31,3 +31,5 @@ println("\nExpected order: 1,2,3,4,5; pending: 7")
 rfifo(true)
 println("\nExpected order: 1,2,5,7,4; pending: 3")
 rfifo(false)
+
+# TODO: add waive! test

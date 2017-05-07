@@ -1,7 +1,7 @@
 """
 Internal structure that remembers that `quantity` was requested by `request`.
 """
-immutable ResourceRequest{Q<:Real}
+immutable ResourceRequest{Q<:Real} <: AbstractReservoir
     quantity::Q
     request::Function
 end
@@ -47,7 +47,7 @@ type Resource{Q<:Real}
     end
 end
 
-function dispatch!{S<:AbstractState, T<:Real, Q<:Real}(s::Scheduler{S,T}, r::Resource{Q})
+function dispatch!(s::Scheduler, r::Resource)
     # here while is needed - a large provide! can fulfill many requests
     while (!isempty(r.requests) &&
            r.lo <= r.quantity - r.requests[end].quantity <= r.hi)
@@ -57,7 +57,8 @@ function dispatch!{S<:AbstractState, T<:Real, Q<:Real}(s::Scheduler{S,T}, r::Res
     end
 end
 
-function request!{Q<:Real, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, r::Resource{Q}, quantity::Q, request::Function)
+function request!{Q<:Real}(s::Scheduler, r::Resource{Q}, quantity::Q,
+                           request::Function)
     length(r.requests) < r.max_requests || return false
     qend = r.fifo_requests ? unshift! : push!
     qend(r.requests, ResourceRequest{Q}(quantity, request))
@@ -65,7 +66,7 @@ function request!{Q<:Real, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, r::Reso
     return true
 end
 
-function provide!{Q<:Real, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, r::Resource{Q}, quantity::Q)
+function provide!{Q<:Real}(s::Scheduler, r::Resource{Q}, quantity::Q)
     startq = r.quantity
     # we do not want to oveflow the container, but allow large provisions
     r.quantity = clamp(startq+quantity, r.lo, r.hi)
@@ -73,4 +74,6 @@ function provide!{Q<:Real, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, r::Reso
     dispatch!(s, r)
     return added # return how much was added
 end
+
+# TODO: add removal from requests - unrequest
 

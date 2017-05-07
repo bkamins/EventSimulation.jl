@@ -20,7 +20,7 @@ When new request arrives there is a try to immediately provide it with `O`.
 Initially an empty `Queue` with no requests is constructed.
 By default `queue` and `requests` have fifo policy and are unbounded.
 """
-type Queue{O}
+type Queue{O} <: AbstractReservoir
     fifo_queue::Bool
     max_queue::Int
     queue::Vector{O}
@@ -38,7 +38,7 @@ type Queue{O}
     end
 end
 
-function dispatch!{O, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, q::Queue{O})
+function dispatch!(s::Scheduler, q::Queue)
     # thechnically could be if as it should never happen that
     # the loop executes more than once, but user might tweak the internals ...
     while !isempty(q.requests) && !isempty(q.queue)
@@ -48,7 +48,7 @@ function dispatch!{O, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, q::Queue{O})
     end
 end
 
-function request!{O, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, q::Queue{O}, request::Function)
+function request!(s::Scheduler, q::Queue, request::Function)
     length(q.requests) < q.max_requests || return false
     qend = q.fifo_requests ? unshift! : push!
     qend(q.requests, request)
@@ -56,7 +56,7 @@ function request!{O, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, q::Queue{O}, 
     return true
 end
 
-function provide!{O, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, q::Queue{O}, object::O)
+function provide!{O}(s::Scheduler, q::Queue{O}, object::O)
     if length(q.queue) < q.max_queue
         qend = q.fifo_queue ? unshift! : push!
         qend(q.queue, object)
@@ -64,5 +64,19 @@ function provide!{O, S<:AbstractState, T<:Real}(s::Scheduler{S,T}, q::Queue{O}, 
         return true
     end
     return false
+end
+
+"""
+    withdraw!(q, object)
+
+Allows to remove first occurence that would be served of `object` from `Queue`.
+
+Returns `true` on success and `false` if `object` was not found.
+"""
+function withdraw!{O}(q::Queue{O}, object::O)
+    idx = findfirst(q.queue, object)
+    idx == 0 && return false
+    deleteat!(q.queue, idx)
+    return true
 end
 
