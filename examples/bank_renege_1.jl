@@ -1,6 +1,10 @@
 using EventSimulation
 using Distributions
 
+# Objectives of the example:
+# * show how Queue object can be used
+# * handling actions by controling state of objects using enums
+
 @enum CUSTOMER_STATE WAITING CASHING RENEGED FINISHED
 
 type Customer
@@ -10,9 +14,9 @@ type Customer
 end
 
 type BankState <: AbstractState
-    all_cust::Int
-    n::Int
-    reneged_count::Int
+    all_cust::Int # how many customers we want to process
+    n::Int # how many customers were processed
+    reneged_count::Int # number of customers that reneged
     arrival::Exponential{Float64}
     patience::Uniform{Float64}
     cashing::Exponential{Float64}
@@ -32,6 +36,7 @@ function source(s::Scheduler)
 end
 
 function renege(s, c)
+    # we do not remove actions from event_queue so we have to check state
     if c.state == WAITING
         s.state.reneged_count += 1
         c.state = RENEGED
@@ -41,12 +46,14 @@ function renege(s, c)
 end
 
 function serve(s, c)
+    # we do not remove actions from event_queue so we have to check state
     if c.state == WAITING
         s.state.report && @printf("%6.4f %s: waited %6.4f\n",
                                   s.now, c.name, s.now-c.arrival_time)
         c.state = CASHING
         register!(s, x -> finish(x, c), rand(s.state.cashing))
     else
+        # actually customer reneged so take the next from queue
         request!(s, s.state.counter, serve)
     end
 end

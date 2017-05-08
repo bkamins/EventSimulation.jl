@@ -1,6 +1,10 @@
 using EventSimulation
 using Distributions
 
+# Objectives of the example:
+# * show how Queue object can be used
+# * filter! as withdraw! using predicate
+
 type Customer
     movie::Int   # which movie to attend
     tickets::Int # how many tickets

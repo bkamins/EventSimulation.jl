@@ -1,10 +1,14 @@
 using EventSimulation
 using Distributions
 
+# Objectives of the example:
+# * show how Queue object can be used
+# * handling interruptions of actions
+
 type Customer
     name::String
     arrival_time::Float64
-    renege_a::Action{Float64}
+    renege_a::Action{Float64} # this is initially left #undef
 
     function Customer(name, arrival_time)
         x = new()
@@ -15,9 +19,9 @@ type Customer
 end
 
 type BankState <: AbstractState
-    all_cust::Int
-    n::Int
-    reneged_count::Int
+    all_cust::Int # how many customers we want to process
+    n::Int # how many customers were processed
+    reneged_count::Int # number of customers that reneged
     arrival::Exponential{Float64}
     patience::Uniform{Float64}
     cashing::Exponential{Float64}
@@ -30,6 +34,7 @@ function source(s::Scheduler)
     c = Customer(string("Customer", s.state.n), s.now)
     s.state.report && @printf("%6.4f %s: Here I am\n", s.now, c.name)
     provide!(s, s.state.counter, c)
+    # we remember the action to remove it from event_queue if needed
     c.renege_a = register!(s, x -> renege(x, c), rand(s.state.patience))
     if s.state.n < s.state.all_cust
         register!(s, source, rand(s.state.arrival))
@@ -40,13 +45,15 @@ function renege(s, c)
     s.state.report && @printf("%6.4f %s: RENEGED after %6.4f\n",
                               s.now, c.name, s.now-c.arrival_time)
     s.state.reneged_count += 1
-    withdraw!(s.state.counter, c) || error("should not happen in renege")
+    # customer reneged and leaves the queue
+    withdraw!(s.state.counter, c) || error("should be succesffull")
 end
 
 function serve(s, c)
     s.state.report && @printf("%6.4f %s: waited %6.4f\n",
                               s.now, c.name, s.now-c.arrival_time)
-    interrupt!(s, c.renege_a) || error("should not happen in serve")
+    # customer got to service so we interrupt renege action
+    interrupt!(s, c.renege_a) || error("should be succesfull")
     register!(s, x -> finish(x, c), rand(s.state.cashing))
 end
 
