@@ -117,9 +117,12 @@ function report(s, final=false)
     print("\n\t\t\t   idle:  ", length(s.state.entry_queue.requests))
     println("\t\t\t idle:\t  ", length(s.state.special_queue.requests))
     if final
-        println("% special: ", mean(f.special for f in x))
-        println("avg normal: ", mean(f.tout-f.tin for f in x if !f.special))
-        println("avg special: ", mean(f.tout-f.tin for f in x if f.special))
+        @printf("%% special:\t%6.4f\n",
+                mean(f.special for f in x))
+        @printf("avg normal:\t%6.4f\n",
+                mean(f.tout-f.tin for f in x if !f.special))
+        @printf("avg special:\t%6.4f\n",
+                mean(f.tout-f.tin for f in x if f.special))
     end
 end
 
@@ -173,5 +176,6 @@ n = 2048
 m = mean(run(17, 7, 8, 4)[3] for i in 1:n)
 s = sqrt(m*(1-m)/n)
 l, h = m + [-2s, 2s]
-println("\nSLA probability with 95% CI for scenario (17,7,8,4): $m ($l, $h)")
+@printf("\nSLA prob. (95%% CI), scenario (17,7,8,4): %6.4f (%6.4f, %6.4f)",
+        m, l, h)
 
