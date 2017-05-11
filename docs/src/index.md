@@ -14,6 +14,9 @@ Examples contained in `/examples/` directory:
 * `bank_renege_1.jl`: bank renege model (reimplementation of SimPy example)
 * `bank_renege_2.jl`: bank renege model (reimplementation of SimPy example)
 * `movie_renege.jl`: movie renege model (reimplementation of SimPy example)
+* `faxqueue.jl`: a two-stage fax queue model;
+  adaptation of Nelson (2013): *Foundations and Methods of Stochastic Simulation*,
+  chap. 4.6, example
 
 The models that are reimplemnetation of SimPy run an order of magnitude (>20x)
 faster than in [SimPy](https://bitbucket.org/simpy/simpy/) or
