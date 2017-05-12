@@ -11,6 +11,7 @@
 
 Examples contained in `/examples/` directory:
 * `mms_example.jl`: comparison of several implementations of M/M/s queue
+* `mm1_example.jl`: basic implementation of M/M/1 queue with use of monitor
 * `bank_renege_1.jl`: bank renege model (reimplementation of SimPy example)
 * `bank_renege_2.jl`: bank renege model (reimplementation of SimPy example)
 * `movie_renege.jl`: movie renege model (reimplementation of SimPy example)

@@ -6,6 +6,7 @@ tests = ["core",
          "queue",
          "resource",
          "../examples/mms_example",
+         "../examples/mm1_example",
         ]
 
 println("Running tests:")
