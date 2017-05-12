@@ -1,7 +1,7 @@
 es = EmptyState()
 
 println("Testing core Scheduler creation")
-sReal = Scheduler{EmptyState, Real}(1.2, Vector{EventSimulation.Action{Real}}(), es)
+sReal = Scheduler{EmptyState, Real}(1.2, Vector{EventSimulation.Action{Real}}(), es, (a,b)->nothing)
 
 println("Testing if register! and go! produce correct order")
 s = Scheduler()
@@ -103,4 +103,15 @@ end
 @test interrupt!(s, a) == true
 go!(s, 1.0)
 @test OK
+
+println("Testing monitor.")
+s = Scheduler()
+deltas = Float64[]
+s.monitor = (s,Δ) -> push!(deltas, Δ)
+repeat_register!(s, x -> nothing, x -> rand())
+go!(s, 100_000)
+m = mean(deltas)
+v = var(deltas)
+println("mean: $m, var: $v")
+@test max(abs(m-0.5), abs(v-1/12)) < 0.005
 

@@ -1,5 +1,5 @@
 println("Testing Scheduler with PriorityTime")
-s = Scheduler(T=PriorityTime{Int, Int})
+s = Scheduler(EmptyState(), PriorityTime{Int, Int})
 ptv = []
 for i in 1:100
     a = rand(1:5)

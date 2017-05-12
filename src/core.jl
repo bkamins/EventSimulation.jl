@@ -78,14 +78,22 @@ Contains three fields:
 * `now`         current simulation time
 * `event_queue` priority queue of `Actions` planned to be executed
 * `state`       user defined subtype of `AbstractState` of the simulation
+* `monitor`     function that is called before event is triggered
+                must accept two arguments `Scheduler` and `Δ` that is time
+                of upcoming event and value of `now` before this event
 
 If two `Action`s have identical `when` time in `event_queue` then
 the order of their execution is undefined
+
+When `monitor` is executed the event to happen is still on `event_queue`,
+but time is updated to time when the event is to be executed (i.e. `monitor`
+sees the state of the simulation just before the event is triggered).
 """
 type Scheduler{S <: AbstractState, T <: Real}
     now :: T
     event_queue :: Vector{Action{T}}
     state :: S
+    monitor :: Function
 end
 
 # Construct empty `Scheduler`
@@ -98,11 +106,14 @@ A convenience constructor of `Scheduler`
 Arguments:
 * `state=EmptyState()` subtype of `AbstractState` to be used by `Scheduler`
 * `T=Float64`          type that will be used to hold time in `Scheduler`
+* `monitor=(s,Δ) -> nothing  monitor function
 
-By default an empty `event_queue` is created and `now` is set to `zero(T)`
+By default an empty `event_queue` is created, `now` is set to `zero(T)`
+and there is idle `monitor`
 """
-function Scheduler{R<:Real}(state = EmptyState(); T::Type{R} = Float64)
-    Scheduler(zero(T), Vector{Action{T}}(), state)
+function Scheduler{R<:Real}(state=EmptyState(), T::Type{R}=Float64,
+                            monitor::Function=(s,Δ) -> nothing)
+    Scheduler(zero(T), Vector{Action{T}}(), state, monitor)
 end
 
 """
@@ -227,8 +238,11 @@ or `s.event_queue` is empty (i.e. nothing is left to be done).
 """
 function go!(s::Scheduler, until::Real)
     while s.now < until && !isempty(s.event_queue)
-        a = pq_remove!(s.event_queue)
+        a = s.event_queue[1]
+        Δ = a.when - s.now
         s.now = a.when
+        s.monitor(s, Δ)
+        pq_remove!(s.event_queue)
         a.what(s)
     end
 end
