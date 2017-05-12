@@ -8,3 +8,7 @@
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://bkamins.github.io/EventSimulation.jl/stable)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://bkamins.github.io/EventSimulation.jl/latest)
 
+
+*An event based Discrete Event Simulation engine for Julia.*
+
+Intended as a support library for teaching basic principles of Discrete Event Simulation.

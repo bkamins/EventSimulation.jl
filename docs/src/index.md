@@ -2,6 +2,8 @@
 
 *An event based Discrete Event Simulation engine for Julia.*
 
+Intended as a support library for teaching basic principles of Discrete Event Simulation.
+
 ## Package features
 * register/interrupt execution of events
 * resource (continuous homogenous good) reservoir
