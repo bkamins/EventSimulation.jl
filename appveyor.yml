@@ -8,7 +8,8 @@ environment:
 branches:
   only:
     - master
-    - /release-.*/
+      # Temporarily removed till 0.6 is released
+      #    - /release-.*/
 
 notifications:
   - provider: Email

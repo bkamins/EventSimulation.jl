@@ -4,7 +4,8 @@ os:
   - linux
   - osx
 julia:
-  - release
+    # Temporarily removed till 0.6 is released
+    #  - release
   - nightly
 notifications:
   email: false
