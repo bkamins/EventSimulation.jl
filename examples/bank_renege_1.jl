@@ -7,13 +7,13 @@ using Distributions
 
 @enum CUSTOMER_STATE WAITING CASHING RENEGED FINISHED
 
-type Customer
+mutable struct Customer
     name::String
     state::CUSTOMER_STATE
     arrival_time::Float64
 end
 
-type BankState <: AbstractState
+mutable struct BankState <: AbstractState
     all_cust::Int # how many customers we want to process
     n::Int # how many customers were processed
     reneged_count::Int # number of customers that reneged

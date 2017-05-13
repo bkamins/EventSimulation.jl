@@ -3,7 +3,7 @@ Structure holding an information
 that `what` should be executed by scheduler at time `when`
 `what` should accept one argument of type `Scheduler`.
 """
-immutable Action{T<:Real}
+struct Action{T<:Real}
     what::Function
     when::T
 end
@@ -16,7 +16,7 @@ Not exported
 Put `Action(what, when)` to `pq`.
 Return inserted `Action`
 """
-function pq_insert!{T<:Real}(pq::Vector{Action{T}}, what::Function, when::T)
+function pq_insert!(pq::Vector{Action{T}}, what::Function, when::T) where T<:Real
     p = Action(what, when)
     push!(pq, p)
     i = length(pq)
@@ -38,7 +38,7 @@ Specialized core Julia code for getting top element from priority queue `pq`
 Not exported
 Return `Action`
 """
-function pq_remove!{T<:Real}(pq::Vector{Action{T}})
+function pq_remove!(pq::Vector{Action{T}}) where T<:Real
     x = pq[1]
     y = pop!(pq)
     if !isempty(pq)
@@ -63,13 +63,13 @@ end
 """
 Abstract type for holding state of the simulation
 """
-abstract AbstractState
+abstract type AbstractState end
 
 """
 Simplest concrete type implementing `AbstractState`
 that does not hold any data
 """
-immutable EmptyState <: AbstractState
+struct EmptyState <: AbstractState
 end
 
 """
@@ -89,11 +89,11 @@ When `monitor` is executed the event to happen is still on `event_queue`,
 but time is updated to time when the event is to be executed (i.e. `monitor`
 sees the state of the simulation just before the event is triggered).
 """
-type Scheduler{S <: AbstractState, T <: Real}
-    now :: T
-    event_queue :: Vector{Action{T}}
-    state :: S
-    monitor :: Function
+type Scheduler{S<:AbstractState, T<:Real}
+    now::T
+    event_queue::Vector{Action{T}}
+    state::S
+    monitor::Function
 end
 
 # Construct empty `Scheduler`
@@ -111,8 +111,8 @@ Arguments:
 By default an empty `event_queue` is created, `now` is set to `zero(T)`
 and there is idle `monitor`
 """
-function Scheduler{R<:Real}(state=EmptyState(), T::Type{R}=Float64,
-                            monitor::Function=(s,Δ) -> nothing)
+function Scheduler(state=EmptyState(), T::Type{R}=Float64,
+                   monitor::Function=(s,Δ) -> nothing) where R<:Real
     Scheduler(zero(T), Vector{Action{T}}(), state, monitor)
 end
 
@@ -123,9 +123,8 @@ Put `what` at time `s.now+Δ` to `s.event_queue`.
 `what` must accept exactly one argument of type `Scheduler`.
 Returns inserted `Action`.
 """
-function register!{S<:AbstractState, T<:Real}(s::Scheduler{S, T},
-                                              what::Function,
-                                              Δ::T = zero(T))
+function register!(s::Scheduler{S, T}, what::Function,
+                   Δ::T = zero(T)) where S<:AbstractState where T<:Real
     when = s.now + Δ
     pq_insert!(s.event_queue, what, when)
 end
@@ -159,11 +158,9 @@ Returns inserted bulk `Action`.
 Function is designed to efficiently handle case when the same action
 has to be executed at the same simulation time by many agents.
 """
-function bulk_register!{S<:AbstractState, T<:Real}(s::Scheduler{S, T},
-                                                   who::AbstractVector,
-                                                   what::Function,
-                                                   Δ::T = zero(T),
-                                                   randomize::Bool=false)
+function bulk_register!(s::Scheduler{S, T}, who::AbstractVector,
+                        what::Function, Δ::T = zero(T),
+                        randomize::Bool=false) where S<:AbstractState where T<:Real
     function bulk_what(x::Scheduler)
         if randomize
             for i in randperm(length(who))
@@ -186,10 +183,8 @@ which must accept `Scheduler` argument.
 `what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`.
 Returns first inserted bulk `Action`.
 """
-function repeat_bulk_register!(s::Scheduler, who::AbstractVector,
-                               what::Function,
-                               interval::Function,
-                               randomize::Bool=false)
+function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function,
+                               interval::Function, randomize::Bool=false)
     function wrap_bulk_what(x)
         if randomize
             for i in randperm(length(who))

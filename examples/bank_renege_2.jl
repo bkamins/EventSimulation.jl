@@ -5,7 +5,7 @@ using Distributions
 # * show how Queue object can be used
 # * handling interruptions of actions
 
-type Customer
+mutable struct Customer
     name::String
     arrival_time::Float64
     renege_a::Action{Float64} # this is initially left #undef
@@ -18,7 +18,7 @@ type Customer
     end
 end
 
-type BankState <: AbstractState
+mutable struct BankState <: AbstractState
     all_cust::Int # how many customers we want to process
     n::Int # how many customers were processed
     reneged_count::Int # number of customers that reneged

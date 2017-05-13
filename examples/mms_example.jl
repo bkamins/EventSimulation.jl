@@ -52,7 +52,7 @@ function run_mm1_fast(until, ar, sr, seed)
 end
 
 # Implementation of M/M/s queue using Queue
-type StateQ <: AbstractState
+mutable struct StateQ <: AbstractState
     ar::Float64
     sr::Float64
     q::Queue{Float64}
@@ -98,7 +98,7 @@ end
 
 # Implementation of M/M/s queue using Resource
 # Notice that if s>1 we have no control of arrival vs departure order
-type StateR <: AbstractState
+mutable struct StateR <: AbstractState
     ar::Float64
     sr::Float64
     r::Resource{Int}

@@ -13,14 +13,14 @@ using Distributions
 # FINISHED  : fax left the system
 @enum STATE WAITING ENTRY MOVED SPECIAL FINISHED
 
-type Fax
+mutable struct Fax
     tin::Float64  # time when customer entered the system
     tout::Float64 # time when customer left the system
     special::Bool # did customer require special queue?
     state::STATE  # current state of the customer
 end
 
-type ServiceCenter <: AbstractState
+mutable struct ServiceCenter <: AbstractState
     ia::Dict{Float64,Exponential{Float64}} # inter arrival distribution
     entry::Uniform{Float64}   # distribution of entry processing time in hours
     special::Uniform{Float64} # distribution of specia processing time in hours

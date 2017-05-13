@@ -5,12 +5,12 @@ using Distributions
 # * show how Queue object can be used
 # * filter! as withdraw! using predicate
 
-type Customer
+mutable struct Customer
     movie::Int   # which movie to attend
     tickets::Int # how many tickets
 end
 
-type Cinema <: AbstractState
+mutable struct Cinema <: AbstractState
     movies::Vector{String}     # names of movies
     available::Vector{Int}     # tickets left
     sold_time::Vector{Float64} # time when tickets were sold out

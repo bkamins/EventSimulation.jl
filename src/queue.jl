@@ -20,7 +20,7 @@ When new request arrives there is a try to immediately provide it with `O`.
 Initially an empty `Queue` with no requests is constructed.
 By default `queue` and `requests` have fifo policy and are unbounded.
 """
-type Queue{O} <: AbstractReservoir
+mutable struct Queue{O} <: AbstractReservoir
     fifo_queue::Bool
     max_queue::Int
     queue::Vector{O}
@@ -28,9 +28,9 @@ type Queue{O} <: AbstractReservoir
     max_requests::Int
     requests::Vector{Function}
 
-    function Queue(;fifo_queue::Bool=true, max_queue::Int=typemax(Int),
+    function Queue{O}(;fifo_queue::Bool=true, max_queue::Int=typemax(Int),
                       fifo_requests::Bool=true,
-                      max_requests::Int=typemax(Int))
+                      max_requests::Int=typemax(Int)) where O
         max_queue > 0 || error("max_queue must be positive")
         max_requests > 0 || error("max_requests must be positive")
         new(fifo_queue, max_queue, Vector{O}(),
@@ -63,7 +63,7 @@ function waive!(q::Queue, request::Function)
     return true
 end
 
-function provide!{O}(s::Scheduler, q::Queue{O}, object::O)
+function provide!(s::Scheduler, q::Queue{O}, object::O) where O
     if length(q.queue) < q.max_queue
         qend = q.fifo_queue ? unshift! : push!
         qend(q.queue, object)
@@ -80,7 +80,7 @@ Allows to remove first occurence that would be served of `object` from `Queue`.
 
 Returns `true` on success and `false` if `object` was not found.
 """
-function withdraw!{O}(q::Queue{O}, object::O)
+function withdraw!(q::Queue{O}, object::O) where O
     idx = findfirst(q.queue, object)
     idx == 0 && return false
     deleteat!(q.queue, idx)

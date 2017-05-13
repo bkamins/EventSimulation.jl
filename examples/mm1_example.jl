@@ -4,7 +4,7 @@ using Base.Test
 # Objectives of the example:
 # * show basic use of monitor function
 
-type Queue <: AbstractState
+mutable struct MMQueue <: AbstractState
     ar::Float64 # arrival rate
     sr::Float64 # service rate
     len::Int    # queue length
@@ -44,7 +44,7 @@ function leave(s)
 end
 
 function run(ar, sr)
-    q = Queue(ar, sr, 0, false, Dict{Int, Float64}())
+    q = MMQueue(ar, sr, 0, false, Dict{Int, Float64}())
     s = Scheduler(q, Float64, monitor)
     repeat_register!(s, arrival, x -> randexp()/ar)
     go!(s, 1_000_000)

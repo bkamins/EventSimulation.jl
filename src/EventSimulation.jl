@@ -26,7 +26,7 @@ include("core.jl")
 Abstract class for reservoirs.
 `Queue` and `Resource` are concrete types implementing it.
 """
-abstract AbstractReservoir
+abstract type AbstractReservoir end
 
 """
     dispatch!(s, r)
