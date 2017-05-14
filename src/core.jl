@@ -42,7 +42,6 @@ function pq_remove!(pq::Vector{Action{T}}) where T<:Real
     x = pq[1]
     y = pop!(pq)
     if !isempty(pq)
-        pq[1] = y
         i = 1
         len = length(pq)
         @inbounds while (l = 2i) <= len
