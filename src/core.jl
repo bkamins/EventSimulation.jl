@@ -88,7 +88,7 @@ When `monitor` is executed the event to happen is still on `event_queue`,
 but time is updated to time when the event is to be executed (i.e. `monitor`
 sees the state of the simulation just before the event is triggered).
 """
-type Scheduler{S<:AbstractState, T<:Real}
+mutable struct Scheduler{S<:AbstractState, T<:Real}
     now::T
     event_queue::Vector{Action{T}}
     state::S
