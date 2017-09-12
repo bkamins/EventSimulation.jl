@@ -123,7 +123,7 @@ Put `what` at time `s.now+Δ` to `s.event_queue`.
 Returns inserted `Action`.
 """
 function register!(s::Scheduler{S, T}, what::Function,
-                   Δ::T = zero(T)) where S<:AbstractState where T<:Real
+                   Δ::T = zero(T)) where {S<:AbstractState, T<:Real}
     when = s.now + Δ
     pq_insert!(s.event_queue, what, when)
 end
@@ -159,7 +159,7 @@ has to be executed at the same simulation time by many agents.
 """
 function bulk_register!(s::Scheduler{S, T}, who::AbstractVector,
                         what::Function, Δ::T = zero(T),
-                        randomize::Bool=false) where S<:AbstractState where T<:Real
+                        randomize::Bool=false) where {S<:AbstractState, T<:Real}
     function bulk_what(x::Scheduler)
         if randomize
             for i in randperm(length(who))
@@ -240,4 +240,3 @@ function go!(s::Scheduler, until::Real)
         a.what(s)
     end
 end
-

@@ -48,4 +48,3 @@ rr3 = request!(s, r, 2, x -> println(4))[2]
 @test waive!(r, rr1)
 @test waive!(r, rr3)
 @test isempty(r.requests)
-

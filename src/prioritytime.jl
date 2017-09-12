@@ -29,65 +29,64 @@ PriorityTime(time::T1) where T1 = PriorityTime{T1,Float64}(time, rand())
 # need to define conversion from PriorityTime to PriorityTime to avoid recursion
 # as PriorityTime is a subtype of Real
 function convert(T::Type{PriorityTime{T1,T2}},
-                 x::PriorityTime{T3,T4}) where T1 where T2 where T3 where T4
+                 x::PriorityTime{T3,T4}) where {T1, T2, T3, T4}
     PriorityTime{T1,T2}(convert(T1, x.time), convert(T2, x.priority))
 end
 
 # Reals other than PriorityTime convert with priority equal to zero of their type
-function convert(T::Type{PriorityTime{T1,T2}}, x::T3) where T1 where T2 where T3
+function convert(T::Type{PriorityTime{T1,T2}}, x::T3) where {T1, T2, T3}
     PriorityTime{T1,T2}(convert(T1, x), zero(T2))
 end
 
 # need to define promotion from PriorityTime to PriorityTime to avoid recursion
 # as PriorityTime is a subtype of Real
 function promote_rule(::Type{PriorityTime{T1,T2}},
-                      ::Type{PriorityTime{T3,T4}}) where T1 where T2 where T3 where T4
+                      ::Type{PriorityTime{T3,T4}}) where {T1, T2, T3, T4}
     PriorityTime{promote_type(T1,T3),promote_type(T2,T4)}
 end
 
 # Reals other than PriorityTime assume that they are converted to time field.
 # Result of promotion is PriorityTime
 function promote_rule(::Type{PriorityTime{T1,T2}},
-                      ::Type{T3}) where T1 where T2 where T3
+                      ::Type{T3}) where {T1, T2, T3}
     PriorityTime{promote_type(T1,T3),T2}
 end
 
 # Need to also handle the case when PriorityTime is a second argument in promotion.
 function promote_rule(::Type{T3},
-                      ::Type{PriorityTime{T1,T2}}) where T1 where T2 where T3
+                      ::Type{PriorityTime{T1,T2}}) where {T1, T2, T3}
     PriorityTime{promote_type(T1,T3),T2}
 end
 
 # We use tuple hashing algorithm.
-function hash(x::PriorityTime{T1,T2}, h::UInt) where T1 where T2
+function hash(x::PriorityTime{T1,T2}, h::UInt) where {T1, T2}
     hash((x.time, x.priority), h)
 end
 
 # in addition and subtraction both fields are updated
 # so that the operations are commutative
-function +(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where T1 where T2
+function +(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
     PriorityTime{T1,T2}(x.time+y.time, x.priority+y.priority)
 end
 
-function -(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where T1 where T2
+function -(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
     PriorityTime{T1,T2}(x.time-y.time, x.priority-y.priority)
 end
 
 # we define lexicographic order on PriorityTime
 # where both objectives are maximized and time is more important
-function ==(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where T1 where T2
+function ==(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
     x.time==y.time && x.priority==y.priority
 end
 
-function <(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where T1 where T2
+function <(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
     x.time < y.time && return true
     x.time == y.time && x.priority < y.priority && return true
     return false
 end
 
-function <=(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where T1 where T2
+function <=(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
     x.time < y.time && return true
     x.time == y.time && x.priority <= y.priority && return true
     return false
 end
-

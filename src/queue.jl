@@ -86,4 +86,3 @@ function withdraw!(q::Queue{O}, object::O) where O
     deleteat!(q.queue, idx)
     return true
 end
-

@@ -77,4 +77,3 @@ end
 srand(1)
 @time run(10, true)
 @time run(1_000_000, false)
-

@@ -6,4 +6,3 @@ for f in d
         run(`julia $f`)
     end
 end
-

@@ -173,4 +173,3 @@ t5_x = run_mms_exact(0.8, 0.2, 5)
 
 @test t5_q[2:3] == t5_r[2:3]
 @test isapprox(t5_x, t5_q[1], atol=0.2)
-

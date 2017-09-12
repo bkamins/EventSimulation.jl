@@ -80,4 +80,3 @@ tc4 = Int16(2)
 @test ptc1 < tc4
 @test !(ptc1 >= tc4)
 @test !(ptc1 > tc4)
-

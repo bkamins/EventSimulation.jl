@@ -114,4 +114,3 @@ m = mean(deltas)
 v = var(deltas)
 println("mean: $m, var: $v")
 @test max(abs(m-0.5), abs(v-1/12)) < 0.005
-

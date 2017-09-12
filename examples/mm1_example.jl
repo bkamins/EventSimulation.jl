@@ -63,4 +63,3 @@ end
 
 println("Test of M/M/1 queue with monitor")
 @test run(1.5, 3.5) < 0.005
-
