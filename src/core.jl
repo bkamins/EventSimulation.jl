@@ -73,13 +73,13 @@ end
 
 """
 Holds information about current simulation state
-Contains three fields:
+Contains the following fields:
 * `now`         current simulation time
 * `event_queue` priority queue of `Actions` planned to be executed
 * `state`       user defined subtype of `AbstractState` of the simulation
 * `monitor`     function that is called before event is triggered
-                must accept two arguments `Scheduler` and `Δ` that is time
-                of upcoming event and value of `now` before this event
+                must accept two arguments `Scheduler` and `Δ`, a difference
+                between time of upcoming event and time of last executed event
 
 If two `Action`s have identical `when` time in `event_queue` then
 the order of their execution is undefined
@@ -151,7 +151,7 @@ Put event at time `s.now+Δ` to `s.event_queue`
 that will execute `what(scheduler, w)` for all `w` in `who`.
 If `randomize` is `false` then `who` is traversed in natural order
 otherwise it is traversed in random order.
-`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`.
+`what` must accept exactly two arguments of type `Scheduler` and `typeof(who)`.
 Returns inserted bulk `Action`.
 
 Function is designed to efficiently handle case when the same action
