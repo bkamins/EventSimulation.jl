@@ -16,15 +16,14 @@ Fields:
 * `quantiy   `    current quantity in resource
 * `lo`            minimum quantity of resource
 * `hi`            maximum quantity of resource
-* `fifo_requests` if `true` `requests` is fifo, otherwise lifo
+* `fifo_requests` if `true` `requests` is FIFO, otherwise LIFO
 * `max_requests`  maximum `requests` size
 * `requests`      vector of request and requested quantity
 
 Functions in `requests` must accept one argument `Scheduler`, so they should
-know the amount they requested.
-When resource arrives to a queue there is a try to immediately dispatch it
-to pending requests.
-When new request arrives there is a try to immediately fulfill it.
+know the amount they requested. When resource arrives to a queue there is a try
+to immediately dispatch it to pending requests. When new request arrives there
+is a try to immediately fulfill it.
 
 Initially an empty `Resource` with no requests is constructed.
 Initial `quantity`, `lo` and `hi` may be provided. By default `Resource` is
@@ -49,7 +48,7 @@ mutable struct Resource{Q<:Real} <: AbstractReservoir
 end
 
 function dispatch!(s::Scheduler, r::Resource)
-    # here while is needed - a large provide! can fulfill many requests
+    # while is needed as large provide! can fulfill many requests
     while (!isempty(r.requests) &&
            r.lo <= r.quantity - r.requests[end].quantity <= r.hi)
         req = pop!(r.requests)

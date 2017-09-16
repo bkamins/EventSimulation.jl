@@ -176,5 +176,4 @@ n = 2048
 m = mean(run(17, 7, 8, 4)[3] for i in 1:n)
 s = sqrt(m*(1-m)/n)
 l, h = m + [-2s, 2s]
-@printf("\nSLA prob. (95%% CI), scenario (17,7,8,4): %6.4f (%6.4f, %6.4f)",
-        m, l, h)
+@printf("\nSLA prob. (95%% CI), scenario (17,7,8,4): %6.4f (%6.4f, %6.4f)", m, l, h)
