@@ -13,7 +13,7 @@ mutable struct MMQueue <: AbstractState
 end
 
 # here we accumulate information about queue lengths and periods
-function monitor(s,Δ)
+function monitor(s, Δ)
     ld = s.state.load_data
     load = s.state.len + s.state.busy
     if haskey(ld, load)
