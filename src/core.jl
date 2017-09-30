@@ -1,6 +1,6 @@
 """
 Structure holding an information
-that `what` should be executed by scheduler at time `when`
+that `what` should be executed by scheduler at time `when`;
 `what` should accept one argument of type `Scheduler`.
 """
 struct Action{T<:Real}
@@ -79,7 +79,7 @@ Contains the following fields:
 * `state`       user defined subtype of `AbstractState` of the simulation
 * `monitor`     function that is called before event is triggered
                 must accept two arguments `Scheduler` and `Δ`, a difference
-                between time of upcoming event and time of last executed event
+                between time of event to be executed and time of last executed event
 
 If two `Action`s have identical `when` time in `event_queue` then
 the order of their execution is undefined
@@ -87,6 +87,8 @@ the order of their execution is undefined
 When `monitor` is executed the event to happen is still on `event_queue`,
 but time is updated to time when the event is to be executed (i.e. `monitor`
 sees the state of the simulation just before the event is triggered).
+Therefore for calculating summary statistics `monitor` may assume that
+the simulation spent `Δ` time in this state.
 """
 mutable struct Scheduler{S<:AbstractState, T<:Real}
     now::T
@@ -179,7 +181,7 @@ end
 
 Repeat `bulk_register!` at time intervals specified by `interval`,
 which must accept `Scheduler` argument.
-`what` must accept exactly tow arguments of type `Scheduler` and `typeof(who)`.
+`what` must accept exactly two arguments of type `Scheduler` and `typeof(who)`.
 Returns first inserted bulk `Action`.
 """
 function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function,
@@ -218,7 +220,7 @@ end
 
 Empties `s.event_queue` which will lead to termination of simulation
 unless it is refilled before execution returns to `go!`.
-Useful for event-triggered termination of simulation
+Useful for event-triggered termination of simulation.
 """
 function terminate!(s::Scheduler)
     empty!(s.event_queue)
@@ -229,8 +231,9 @@ end
 
 Runs simulation defined by `s` until `s.now` is greater or equal than `until`
 or `s.event_queue` is empty (i.e. nothing is left to be done).
+By default `until` equals `Inf`.
 """
-function go!(s::Scheduler, until::Real)
+function go!(s::Scheduler, until::Real=Inf)
     while s.now < until && !isempty(s.event_queue)
         a = s.event_queue[1]
         Δ = a.when - s.now
