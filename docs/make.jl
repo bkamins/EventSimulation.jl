@@ -2,4 +2,5 @@ using Documenter, EventSimulation
 
 makedocs()
 
-deploydocs(repo = "github.com/bkamins/EventSimulation.jl.git")
+deploydocs(repo = "github.com/bkamins/EventSimulation.jl.git",
+           osname = "osx")
