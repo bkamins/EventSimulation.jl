@@ -2,7 +2,7 @@ using EventSimulation
 using Distributions
 
 # Objectives of the example:
-# * show how Queue object can be used
+# * show how SimQueue object can be used
 # * filter! as withdraw! using predicate
 
 mutable struct Customer
@@ -15,7 +15,7 @@ mutable struct Cinema <: AbstractState
     available::Vector{Int}     # tickets left
     sold_time::Vector{Float64} # time when tickets were sold out
     renege_count::Vector{Int}  # number of people that left the queue
-    counter::Queue{Customer}   # queue to counter
+    counter::SimQueue{Customer}   # queue to counter
 end
 
 function arrival(s::Scheduler)
@@ -51,7 +51,7 @@ end
 function run(report::Bool)
     ms = ["Python Unchained", "Kill Process", "Pulp Implementation"]
     cinema = Cinema(ms, [50, 50, 50], [NaN, NaN, NaN],
-                    [0, 0, 0], Queue{Customer}())
+                    [0, 0, 0], SimQueue{Customer}())
     s = Scheduler(cinema)
     request!(s, cinema.counter, buy_ticket)
     repeat_register!(s, arrival, x -> rand(Exponential(0.5)))

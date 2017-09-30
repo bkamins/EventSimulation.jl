@@ -25,8 +25,8 @@ mutable struct ServiceCenter <: AbstractState
     entry::Uniform{Float64}   # distribution of entry processing time in hours
     special::Uniform{Float64} # distribution of specia processing time in hours
     special_prob::Float64     # probability that fax requires special clerk
-    entry_queue::Queue{Fax}   # entry queue
-    special_queue::Queue{Fax} # special queue
+    entry_queue::SimQueue{Fax}   # entry queue
+    special_queue::SimQueue{Fax} # special queue
     faxes::Vector{Fax}        # archive of all processed faxes
 
     function ServiceCenter()
@@ -37,7 +37,7 @@ mutable struct ServiceCenter <: AbstractState
         special = Uniform(2.0/60, 6.0/60)
         special_prob = 0.2
         new(ia, entry, special, special_prob,
-            Queue{Fax}(), Queue{Fax}(), Vector{Fax}())
+            SimQueue{Fax}(), SimQueue{Fax}(), Vector{Fax}())
     end
 end
 

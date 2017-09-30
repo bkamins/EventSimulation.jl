@@ -12,6 +12,8 @@ Intended as a support library for teaching basic principles of Discrete Event Si
 
 ## Examples
 
+A quick start tutorial can be found [here](tutorial.md).
+
 Examples contained in `/examples/` directory:
 * `mms_example.jl`: comparison of several implementations of M/M/s queue
 * `mm1_example.jl`: basic implementation of M/M/1 queue with use of monitor
@@ -27,7 +29,40 @@ faster than in [SimPy](https://bitbucket.org/simpy/simpy/) or
 [SimJulia](https://github.com/BenLauwens/SimJulia.jl)
 process oriented DES engines.
 
-# Types and functions defined in EventSimulation package
+# Quck overview of EventSimulation functionality
+
+* General functionality
+    * `EventSimulation`
+    * `Action`: information that a given function should be executed at given
+      time
+    * `AbstractState`: abstract type used for holding global simulation state
+    * `EmptyState`: simplest empty concrete subtype of `AbstractState`
+    * `Scheduler`
+    * `register!`: puts `Action` into `Scheduler` queue
+    * `repeat_register!`: puts `Action` into `Scheduler` queue repeatedly
+    * `bulk_register!`: puts `Action` into `Scheduler` that will affect
+      multiple objects
+    * `repeat_bulk_register!`: puts `Action` into `Scheduler` that will affect
+      multiple objects repeatedly
+    * `interrupt!`: removes one given event from `Scheduler` queue
+    * `terminate!`: removes all events from `Scheduler` queue
+    * `go!`: executes the simulation
+* Containers
+    * `AbstractReservoir`: abstract type for defining reservoirs
+    * `SimResource`: reservoir for divisible and homogeneous matter
+    * `ResourceRequest`: information about request for a resource
+    * `SimQueue`: reservoir for objects having unique identity
+    * `request!`: registers demand for a resource/object
+    * `waive!`: remove registered request from waiting list
+    * `provide!`: add resource/object to reservoir
+      (or remove resource from `SimResource`)
+    * `withdraw!`: remove object from `SimQueue`
+* Utilities
+    * `PriorityTime`: custom subtype of `Real` providing additional attribute
+      `priority` to normal time. Useful for giving execution priority of events
+      happening at the same time.
+
+# Documentation Types and functions defined in EventSimulation package
 
 ```@docs
 EventSimulation
@@ -43,9 +78,10 @@ interrupt!
 terminate!
 go!
 AbstractReservoir
+SimResource
 ResourceRequest
-Resource
-Queue
+SimQueue
+dispatch!
 request!
 waive!
 provide!

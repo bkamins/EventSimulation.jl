@@ -2,9 +2,9 @@ using EventSimulation
 using Base.Test
 
 # Objectives of the example:
-# * show how Queue and Resource objects can be used
-# * show that Queue gives a fine grained control than Resource
-#   but is more expensive (actually Resource use is a hack)
+# * show how SimQueue and SimResource objects can be used
+# * show that SimQueue gives a fine grained control than SimResource
+#   but is more expensive (actually SimResource use is a hack)
 # * show how MersenneTwister with randjump can be used to control RNG streams
 
 # exact formula for M/M/s queue
@@ -51,11 +51,11 @@ function run_mm1_fast(until, ar, sr, seed)
     return totalWait/totalCount, totalCount, msg
 end
 
-# Implementation of M/M/s queue using Queue
+# Implementation of M/M/s queue using SimQueue
 mutable struct StateQ <: AbstractState
     ar::Float64
     sr::Float64
-    q::Queue{Float64}
+    q::SimQueue{Float64}
     tcust::Int
     tin::Float64
     ma::MersenneTwister
@@ -63,7 +63,7 @@ mutable struct StateQ <: AbstractState
     msg::Vector{String}
     function StateQ(ar, sr)
         ma, ms = randjump(MersenneTwister(1), 2)
-        new(Float64(ar), Float64(sr), Queue{Float64}(),
+        new(Float64(ar), Float64(sr), SimQueue{Float64}(),
             0, 0.0, ma, ms, String[])
     end
 end
@@ -96,12 +96,12 @@ function run_mms_queue(until, ar, sr, count)
     return s.state.tin/s.state.tcust, s.state.tcust, s.state.msg 
 end
 
-# Implementation of M/M/s queue using Resource
+# Implementation of M/M/s queue using SimResource
 # Notice that if s>1 we have no control of arrival vs departure order
 mutable struct StateR <: AbstractState
     ar::Float64
     sr::Float64
-    r::Resource{Int}
+    r::SimResource{Int}
     ars::Vector{Float64}
     tcust::Int
     tin::Float64
@@ -110,7 +110,7 @@ mutable struct StateR <: AbstractState
     msg::Vector{String}
     function StateR(ar, sr)
         ma, ms = randjump(MersenneTwister(1), 2)
-        new(Float64(ar), Float64(sr), Resource{Int}(),
+        new(Float64(ar), Float64(sr), SimResource{Int}(),
             Vector{Float64}(), 0, 0.0, ma, ms, String[])
     end
 end

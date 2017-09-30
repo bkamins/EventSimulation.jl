@@ -25,11 +25,11 @@ know the amount they requested. When resource arrives to a queue there is a try
 to immediately dispatch it to pending requests. When new request arrives there
 is a try to immediately fulfill it.
 
-Initially an empty `Resource` with no requests is constructed.
-Initial `quantity`, `lo` and `hi` may be provided. By default `Resource` is
+Initially an empty `SimResource` with no requests is constructed.
+Initial `quantity`, `lo` and `hi` may be provided. By default `SimResource` is
 empty, and has minimum quantity of zero and unbounded maximum.
 """
-mutable struct Resource{Q<:Real} <: AbstractReservoir
+mutable struct SimResource{Q<:Real} <: AbstractReservoir
     quantity::Q
     lo::Q
     hi::Q
@@ -37,7 +37,7 @@ mutable struct Resource{Q<:Real} <: AbstractReservoir
     max_requests::Int
     requests::Vector{ResourceRequest{Q}}
 
-    function Resource{Q}(;quantity::Q=zero(Q), lo::Q=zero(Q), hi::Q=typemax(Q),
+    function SimResource{Q}(;quantity::Q=zero(Q), lo::Q=zero(Q), hi::Q=typemax(Q),
                       fifo_requests::Bool=true,
                       max_requests::Int=typemax(Int)) where Q
         lo <= quantity <= hi || error("wrong quantity/lo/hi combination")
@@ -47,7 +47,7 @@ mutable struct Resource{Q<:Real} <: AbstractReservoir
     end
 end
 
-function dispatch!(s::Scheduler, r::Resource)
+function dispatch!(s::Scheduler, r::SimResource)
     # while is needed as large provide! can fulfill many requests
     while (!isempty(r.requests) &&
            r.lo <= r.quantity - r.requests[end].quantity <= r.hi)
@@ -57,7 +57,7 @@ function dispatch!(s::Scheduler, r::Resource)
     end
 end
 
-function request!(s::Scheduler, r::Resource{Q}, quantity::Q,
+function request!(s::Scheduler, r::SimResource{Q}, quantity::Q,
                   request::Function) where Q
     rr = ResourceRequest{Q}(quantity, request)
     length(r.requests) < r.max_requests || return false, rr
@@ -67,14 +67,14 @@ function request!(s::Scheduler, r::Resource{Q}, quantity::Q,
     return true, rr
 end
 
-function waive!(r::Resource{Q}, res_request::ResourceRequest{Q}) where Q
+function waive!(r::SimResource{Q}, res_request::ResourceRequest{Q}) where Q
     idx = findfirst(r.requests, res_request)
     idx == 0 && return false
     deleteat!(r.requests, idx)
     return true
 end
 
-function provide!(s::Scheduler, r::Resource{Q}, quantity::Q) where Q
+function provide!(s::Scheduler, r::SimResource{Q}, quantity::Q) where Q
     startq = r.quantity
     # we do not want to oveflow the container, but allow large provisions
     r.quantity = clamp(startq+quantity, r.lo, r.hi)

@@ -1,6 +1,6 @@
 function qfifo(fq, fr)
-    println("Queue FIFO: $fq\tResource FIFO: $fr")
-    q = Queue{Int}(max_queue = 5, max_requests = 3,
+    println("SimQueue FIFO: $fq\tResource FIFO: $fr")
+    q = SimQueue{Int}(max_queue = 5, max_requests = 3,
                    fifo_queue = fq, fifo_requests = fr)
     s = Scheduler()
 
@@ -46,9 +46,9 @@ println("\nExpected output order: (3,1) (2,2) (1,3) (4,8) (5,7) (6,6)")
 qfifo(false, false)
 
 
-println("Queue waive! test")
+println("SimQueue waive! test")
 s = Scheduler()
-q = Queue{Int}()
+q = SimQueue{Int}()
 @test !waive!(q, identity)
 
 f1 = x -> println(1)
@@ -66,10 +66,10 @@ request!(s, q, f3)
 @test waive!(q, f3)
 @test isempty(q.requests)
 
-println("Queue withdraw! test")
+println("SimQueue withdraw! test")
 
 s = Scheduler()
-q = Queue{Int}()
+q = SimQueue{Int}()
 @test !withdraw!(q, 1)
 
 provide!(s, q, 1)

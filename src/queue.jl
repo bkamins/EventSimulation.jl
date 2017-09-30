@@ -1,5 +1,5 @@
 """
-Queue type for holding arbitrary objects `O`. It allows objects to be waiting
+SimQueue type for holding arbitrary objects `O`. It allows objects to be waiting
 in a queue with optional maximum queue size. Servers can get objects from the
 queue with optional maximum number of requests pending for fulfillment.
 
@@ -15,10 +15,10 @@ Functions in `requests` must accept two arguments `Scheduler` and `O`. When `O`
 arrives to a queue there is a try to immediately feed it to pending requests.
 When new request arrives there is a try to immediately provide it with `O`.
 
-Initially an empty `Queue` with no requests is constructed.
+Initially an empty `SimQueue` with no requests is constructed.
 By default `queue` and `requests` have FIFO policy and are unbounded.
 """
-mutable struct Queue{O} <: AbstractReservoir
+mutable struct SimQueue{O} <: AbstractReservoir
     fifo_queue::Bool
     max_queue::Int
     queue::Vector{O}
@@ -26,9 +26,9 @@ mutable struct Queue{O} <: AbstractReservoir
     max_requests::Int
     requests::Vector{Function}
 
-    function Queue{O}(;fifo_queue::Bool=true, max_queue::Int=typemax(Int),
-                      fifo_requests::Bool=true,
-                      max_requests::Int=typemax(Int)) where O
+    function SimQueue{O}(;fifo_queue::Bool=true, max_queue::Int=typemax(Int),
+                         fifo_requests::Bool=true,
+                         max_requests::Int=typemax(Int)) where O
         max_queue > 0 || error("max_queue must be positive")
         max_requests > 0 || error("max_requests must be positive")
         new(fifo_queue, max_queue, Vector{O}(),
@@ -36,7 +36,7 @@ mutable struct Queue{O} <: AbstractReservoir
     end
 end
 
-function dispatch!(s::Scheduler, q::Queue)
+function dispatch!(s::Scheduler, q::SimQueue)
     # technically could be if as it should never happen that
     # the loop executes more than once, but user might tweak the internals ...
     while !isempty(q.requests) && !isempty(q.queue)
@@ -46,7 +46,7 @@ function dispatch!(s::Scheduler, q::Queue)
     end
 end
 
-function request!(s::Scheduler, q::Queue, request::Function)
+function request!(s::Scheduler, q::SimQueue, request::Function)
     length(q.requests) < q.max_requests || return false
     qend = q.fifo_requests ? unshift! : push!
     qend(q.requests, request)
@@ -54,14 +54,14 @@ function request!(s::Scheduler, q::Queue, request::Function)
     return true
 end
 
-function waive!(q::Queue, request::Function)
+function waive!(q::SimQueue, request::Function)
     idx = findfirst(q.requests, request)
     idx == 0 && return false
     deleteat!(q.requests, idx)
     return true
 end
 
-function provide!(s::Scheduler, q::Queue{O}, object::O) where O
+function provide!(s::Scheduler, q::SimQueue{O}, object::O) where O
     if length(q.queue) < q.max_queue
         qend = q.fifo_queue ? unshift! : push!
         qend(q.queue, object)
@@ -74,11 +74,11 @@ end
 """
     withdraw!(q, object)
 
-Allows to remove first occurrence that would be served of `object` from `Queue`.
+Allows to remove first occurrence that would be served of `object` from `SimQueue`.
 
 Returns `true` on success and `false` if `object` was not found.
 """
-function withdraw!(q::Queue{O}, object::O) where O
+function withdraw!(q::SimQueue{O}, object::O) where O
     idx = findfirst(q.queue, object)
     idx == 0 && return false
     deleteat!(q.queue, idx)

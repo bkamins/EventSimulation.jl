@@ -2,7 +2,7 @@ using EventSimulation
 using Distributions
 
 # Objectives of the example:
-# * show how Queue object can be used
+# * show how SimQueue object can be used
 # * handling actions by controling state of objects using enums
 
 @enum CUSTOMER_STATE WAITING CASHING RENEGED FINISHED
@@ -20,7 +20,7 @@ mutable struct BankState <: AbstractState
     arrival::Exponential{Float64}
     patience::Uniform{Float64}
     cashing::Exponential{Float64}
-    counter::Queue{Customer}
+    counter::SimQueue{Customer}
     report::Bool
 end
 
@@ -67,7 +67,7 @@ end
 function run(ccount, report)
     bs = BankState(ccount, 0, 0, Exponential(10.0),
                    Uniform(1.0, 3.0), Exponential(12.0),
-                   Queue{Customer}(), report)
+                   SimQueue{Customer}(), report)
     report && println("Bank renege")
     s = Scheduler(bs)
     request!(s, bs.counter, serve)

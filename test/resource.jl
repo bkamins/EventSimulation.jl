@@ -1,10 +1,10 @@
 function rfifo(fr)
-    println("Resource FIFO: $fr")
-    r = Resource{Int}(quantity=5, lo=0, hi=5,
-                      max_requests=3, fifo_requests=fr)
+    println("SimResource FIFO: $fr")
+    r = SimResource{Int}(quantity=5, lo=0, hi=5,
+                         max_requests=3, fifo_requests=fr)
     s = Scheduler()
-    @test_throws ErrorException Resource{Int}(quantity=0, lo=1, hi=5)
-    @test_throws ErrorException Resource{Int}(quantity=3, lo=3, hi=2)
+    @test_throws ErrorException SimResource{Int}(quantity=0, lo=1, hi=5)
+    @test_throws ErrorException SimResource{Int}(quantity=3, lo=3, hi=2)
 
     @test request!(s, r, 2, x -> println(1))[1]
     s.now = 1.0
@@ -32,9 +32,9 @@ rfifo(true)
 println("\nExpected order: 1,2,5,7,4; pending: 3")
 rfifo(false)
 
-println("Resource waive! test")
+println("SimResource waive! test")
 s = Scheduler()
-r = Resource{Int}()
+r = SimResource{Int}()
 @test !waive!(r, ResourceRequest(1, identity))
 
 rr1 = request!(s, r, 2, x -> println(2))[2]
