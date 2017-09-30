@@ -32,6 +32,10 @@ pt6 = 1.0 + pt1
 @test pt6.time == pt1.time + 1.0
 @test pt6.priority == pt1.priority
 
+pt_if = PriorityTime(1, 1.0)
+pt_bb = PriorityTime(big(1.0), big(1))
+@test pt_if+pt_bb == PriorityTime(big(2.0), big(2.0))
+
 println("Testing zero")
 z1 = zero(PriorityTime{Int, Int16})
 z2 = zero(z1)
