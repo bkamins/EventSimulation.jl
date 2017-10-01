@@ -36,7 +36,7 @@ f(x) = push!(rrv, x.now)
 ifun(x) = x.now + 1
 repeat_register!(s, f, ifun)
 go!(s, 50)
-@test rrv == [1,3,7,15,31,63]
+@test rrv == [1,3,7,15,31]
 
 println("Testing ordered bulk_register!")
 s = Scheduler()

@@ -29,7 +29,9 @@ function run_mm1_fast(until, ar, sr, seed)
     while now < until
         if nextArrival < nextDeparture
             now = nextArrival
-            push!(msg, "A $now")
+            if now <= until
+                push!(msg, "A $now")
+            end
             if isempty(queue)
                 nextDeparture = nextArrival + randexp(ms) / sr
             end
@@ -37,9 +39,11 @@ function run_mm1_fast(until, ar, sr, seed)
             nextArrival += randexp(ma) / ar
         else
             now = nextDeparture
-            push!(msg, "D $now")
-            totalWait += nextDeparture - shift!(queue)
-            totalCount += 1
+            if now <= until
+                push!(msg, "D $now")
+                totalWait += nextDeparture - shift!(queue)
+                totalCount += 1
+            end
             if isempty(queue)
                 nextDeparture = Inf
             else
