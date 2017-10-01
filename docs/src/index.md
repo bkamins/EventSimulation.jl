@@ -37,7 +37,8 @@ General functionality
   time
 * `AbstractState`: abstract type used for holding global simulation state
 * `EmptyState`: simplest empty concrete subtype of `AbstractState`
-* `Scheduler`
+* `Scheduler`: central object in the library jused to store information about
+  event queue
 * `register!`: puts `Action` into `Scheduler` queue
 * `repeat_register!`: puts `Action` into `Scheduler` queue repeatedly
 * `bulk_register!`: puts `Action` into `Scheduler` that will affect

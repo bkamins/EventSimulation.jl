@@ -90,7 +90,9 @@ sees the state of the simulation just before the event is triggered).
 Therefore for calculating summary statistics `monitor` may assume that
 the simulation spent `Δ` time in this state.
 Function `monitor` should not modify `event_queue[1]` as EventSimulation assumes
-that the event to be triggerd after `monitor` executes will not be modified.
+that the event to be triggered after `monitor` executes will not be modified.
+Additionally it it not guaranteed that `event_queue[1]` will be executed after
+`monitor` finishes because simulation might terminate earlier.
 """
 mutable struct Scheduler{S<:AbstractState, T<:Real}
     now::T
@@ -238,12 +240,21 @@ or `s.event_queue` is empty (i.e. nothing is left to be done).
 By default `until` equals `Inf`.
 """
 function go!(s::Scheduler, until::Real=Inf)
-    while s.now < until && !isempty(s.event_queue)
+    while !isempty(s.event_queue)
         a = s.event_queue[1]
-        Δ = a.when - s.now
-        s.now = a.when
-        s.monitor(s, Δ)
-        pq_remove!(s.event_queue)
-        a.what(s)
+        when = a.when
+        if when <= until
+            Δ = when - s.now
+            s.now = when
+            s.monitor(s, Δ)
+            pq_remove!(s.event_queue)
+            a.what(s)
+            when == until && break
+        else
+            Δ = until - s.now
+            s.now = until
+            s.monitor(s, Δ)
+            break
+        end
     end
 end
