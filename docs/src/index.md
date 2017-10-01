@@ -31,7 +31,7 @@ process oriented DES engines.
 
 # Quck overview of EventSimulation functionality
 
-1. General functionality
+General functionality
 
     * `Action`: information that a given function should be executed at given
       time
@@ -48,7 +48,7 @@ process oriented DES engines.
     * `terminate!`: removes all events from `Scheduler` queue
     * `go!`: executes the simulation
 
-2. Containers
+Containers
 
     * `AbstractReservoir`: abstract type for defining reservoirs
     * `SimResource`: reservoir for divisible and homogeneous matter
@@ -60,7 +60,7 @@ process oriented DES engines.
       (or remove resource from `SimResource`)
     * `withdraw!`: remove object from `SimQueue`
 
-3. Utilities
+Utilities
 
     * `PriorityTime`: custom subtype of `Real` providing additional attribute
       `priority` to normal time. Useful for giving execution priority of events
