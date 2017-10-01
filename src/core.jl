@@ -249,11 +249,10 @@ function go!(s::Scheduler, until::Real=Inf)
             s.monitor(s, Δ)
             pq_remove!(s.event_queue)
             a.what(s)
-            when == until && break
         else
             Δ = until - s.now
             s.now = until
-            s.monitor(s, Δ)
+            Δ > 0 && s.monitor(s, Δ)
             break
         end
     end
