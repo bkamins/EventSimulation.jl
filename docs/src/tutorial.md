@@ -68,3 +68,6 @@ will force unconditional termination of the simulation after this moment.
 
     Think what would happen if the termination time would be omitted in the
     expression `go!(s, 7)`.
+
+    How you could use function `terminate!` inside definition of `arrived` to
+    get a similar effect as . What would be the difference?

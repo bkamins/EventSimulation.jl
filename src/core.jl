@@ -89,6 +89,8 @@ but time is updated to time when the event is to be executed (i.e. `monitor`
 sees the state of the simulation just before the event is triggered).
 Therefore for calculating summary statistics `monitor` may assume that
 the simulation spent `Δ` time in this state.
+Function `monitor` should not modify `event_queue[1]` as EventSimulation assumes
+that the event to be triggerd after `monitor` executes will not be modified.
 """
 mutable struct Scheduler{S<:AbstractState, T<:Real}
     now::T
@@ -137,11 +139,12 @@ Put `what` to `s.event_queue` repeatedly in time intervals specified by
 `interval` function, which must accept one argument of type `Scheduler`.
 `what` must accept exactly one argument of type `Scheduler`.
 Returns first inserted `Action`.
+Calling `terminate!` in function `interval` will not stop the simulation.
 """
 function repeat_register!(s::Scheduler, what::Function, interval::Function)
     function wrap_what(x)
-        what(x)
         register!(x, wrap_what, interval(x))
+        what(x)
     end
     register!(s, wrap_what, interval(s))
 end
@@ -179,14 +182,16 @@ end
 """
     repeat_bulk_register!(s, who, what, Δ, randomize)
 
-Repeat `bulk_register!` at time intervals specified by `interval`,
+Repeat `bulk_register!` at time intervals specified by `interval` function,
 which must accept `Scheduler` argument.
 `what` must accept exactly two arguments of type `Scheduler` and `typeof(who)`.
 Returns first inserted bulk `Action`.
+Calling `terminate!` in function `interval` will not stop the simulation.
 """
 function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function,
                                interval::Function, randomize::Bool=false)
     function wrap_bulk_what(x)
+        register!(x, wrap_bulk_what, interval(x))
         if randomize
             for i in randperm(length(who))
                 what(x, who[i])
@@ -196,7 +201,6 @@ function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function
                 what(x, w)
             end
         end
-        register!(x, wrap_bulk_what, interval(x))
     end
     register!(s, wrap_bulk_what, interval(s))
 end
