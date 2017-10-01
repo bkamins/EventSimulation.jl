@@ -72,6 +72,8 @@
         
             <li><a class="toctree-l3" href="#monitoring-simulation">Monitoring simulation</a></li>
         
+            <li><a class="toctree-l3" href="#introduction-to-resources">Introduction to resources</a></li>
+        
         </ul>
     
 
@@ -233,7 +235,52 @@ println(&quot;Average number of customers in a system is &quot;,
         cs.customer_time/cs.total_time)
 </code></pre>
 
+<p>Observe that <code>monitor</code> usually will modify simulation state to gather the simulation statistics. Other approaches could use global variables or variables defined in closure of <code>monitor</code>, but using simulation state is the recommended approach.</p>
 <p><strong>Exercise</strong>: <em>Think if the obtained result is in line with <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little's law</a>. Try changing arrival rate and time in the system to check it. As a more advanced exercise make <code>monitor</code> collect data only when simulation time is greater or equal than 100 (i.e. discarding simulation burn-in period).</em></p>
+<p><a id='Introduction-to-resources-1'></a></p>
+<h2 id="introduction-to-resources">Introduction to resources</h2>
+<p>Now we will consider two streams of agents. Supplier provides one unit of good every one unit of time. There are customers that arrive randomly and want to buy a random amount of good. Maximally two customers .</p>
+<pre><code>using EventSimulation
+
+mutable struct GoodState &lt;: AbstractState
+    good::SimResource{Float64}
+end
+
+function delivery(s)
+    provide!(s, s.state.good, 1.0)
+    print_with_color(:green, &quot;Delivered 1.0 at &quot;, s.now, &quot;\n&quot;)
+end
+
+function customer(s)
+    function leave(x)
+        println(&quot;Left at &quot;, x.now, &quot; with quantity &quot;, round(demand, 4))
+    end
+    demand = rand()
+    print(&quot;Arrived at &quot;, round(s.now, 4), &quot; with demand &quot;, round(demand, 4))
+    if !request!(s, s.state.good, demand, leave)[1]
+        print_with_color(:red, &quot; but line was too long and left with nothing\n&quot;)
+    else
+        println(&quot; and went into a queue&quot;)
+    end
+end
+
+function balance(s)
+    info(&quot;Amount of good in storage: &quot;,
+         round(s.state.good.quantity, 4), &quot; at time &quot;, s.now)
+end
+
+s = Scheduler(GoodState(SimResource{Float64}(max_requests=2)))
+
+srand(1)
+repeat_register!(s, delivery, x -&gt; 1.0)
+repeat_register!(s, customer, x -&gt; rand())
+repeat_register!(s, balance, x -&gt; x.now == 0 ? 1.000001 : 1.0)
+go!(s, 5)
+</code></pre>
+
+<p>Observe that fulfillment of pending requests by <code>SimResource</code> is immediate. This means that the amount is passed to a request from the container before the request event executed.</p>
+<p><strong>Exercise</strong>: <em>We have used a fixed value of <code>0.000001</code> as an increment over an integer number to invoke <code>balance</code>. Rewrite the example using <code>PriorityTime</code> type in such a way that <code>balance</code> is invoked at integer times but with priority low enough.</em></p>
+<p>This is the end of this introductory tutorial. More advanced features are covered in examples contained in <code>/examples/</code> directory.</p>
               
             </div>
           </div>
