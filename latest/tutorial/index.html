@@ -68,6 +68,10 @@
         
             <li><a class="toctree-l3" href="#defining-infinite-source-of-events">Defining infinite source of events</a></li>
         
+            <li><a class="toctree-l3" href="#defining-custom-simulation-state">Defining custom simulation state</a></li>
+        
+            <li><a class="toctree-l3" href="#monitoring-simulation">Monitoring simulation</a></li>
+        
         </ul>
     
 
@@ -124,7 +128,7 @@
 <p>This is a bare minimum simulation using EventSimulation:</p>
 <pre><code>using EventSimulation
 
-function arrived(s)
+function arrival(s)
     t = s.now
     println(&quot;Arrived at &quot;, s.now)
     register!(s, x -&gt; println(&quot;Left at $(x.now) that arrived at $t&quot;), 1.5)
@@ -132,27 +136,28 @@ end
 
 s = Scheduler()
 for t in 1.0:5.0
-    register!(s, arrived, t)
+    register!(s, arrival, t)
 end
 
 go!(s)
 </code></pre>
 
-<p>In this example five customers arrive at times 1, 2, ..., 5 and stay in the system for 1.5 time units. Observe that in <code>arrived</code> we use a closure to define anonymous function that is registered. In its body <code>x.now</code> will be taken from the state of the scheduler when the anonymous function is invoked but <code>t</code> is fixed in enclosing scope of <code>arrived</code> function as the time of the arrival.</p>
+<p>In this example five customers arrive at times 1, 2, ..., 5 and stay in the system for 1.5 time units. Observe that in <code>arrival</code> we use a closure to define anonymous function that is registered. In its body <code>x.now</code> will be taken from the state of the scheduler when the anonymous function is invoked but <code>t</code> is fixed in enclosing scope of <code>arrival</code> function as the time of the arrival.</p>
 <p><strong>Exercise</strong>: <em>Test what happens if you replace <code>$t</code> with <code>$(s.now)</code> in the anonymous function. What is the reason of this behavior?</em></p>
 <p>When using EventSimulation working with closures is often the simplest way to develop a simulation so it is important that you understand this example.</p>
 <p><a id='Defining-infinite-source-of-events-1'></a></p>
 <h2 id="defining-infinite-source-of-events">Defining infinite source of events</h2>
+<p>Now we add an infinite stream of customers arriving to the system:</p>
 <pre><code>using EventSimulation
 
-function arrived(s)
+function arrival(s)
     t = s.now
     println(&quot;Arrived at &quot;, s.now)
     register!(s, x -&gt; println(&quot;Left at $(x.now) that arrived at $t&quot;), 1.5)
 end
 
 s = Scheduler()
-repeat_register!(s, arrived, x -&gt; 1.0)
+repeat_register!(s, arrival, x -&gt; 1.0)
 
 go!(s, 7)
 
@@ -160,7 +165,75 @@ go!(s, 7)
 
 <p>In this example we show how <code>arrival</code> function can be scheduled to be repeatedly put into event queue in time deltas defined by anonymous function <code>x -&gt; 1.0</code>.</p>
 <p>Aslo observe that we have passed second argument <code>7</code> to function <code>go!</code> which will force unconditional termination of the simulation after this moment.</p>
-<p><strong>Exercise</strong>: <em>Think what would happen if the termination time would be omitted in the expression <code>go!(s, 7)</code>. How you could use function <code>terminate!</code> inside definition of <code>arrived</code> to get a similar effect as . What would be the difference?</em></p>
+<p><strong>Exercise</strong>: <em>Think what would happen if the termination time would be omitted in the expression <code>go!(s, 7)</code>. How you could use function <code>terminate!</code> inside definition of <code>arrival</code> to get a similar effect. What would be the difference?</em></p>
+<p><a id='Defining-custom-simulation-state-1'></a></p>
+<h2 id="defining-custom-simulation-state">Defining custom simulation state</h2>
+<p>Now let us add a simple counter of number of customers in the system:</p>
+<pre><code>using EventSimulation
+
+mutable struct CounterState &lt;: AbstractState
+    count::Int
+end
+
+function arrival(s)
+    function departure(x)
+        x.state.count -= 1
+        println(&quot;Left at $(x.now) that arrived at $t and left &quot;,
+                x.state.count, &quot; other customers&quot;)
+    end
+
+    t = s.now
+    println(&quot;Arrived at &quot;, s.now, &quot; and met &quot;, s.state.count, &quot; other customers&quot;)
+    register!(s, departure, 1.0)
+    s.state.count += 1
+end
+
+s = Scheduler(CounterState(0))
+
+srand(1)
+repeat_register!(s, arrival, x -&gt; rand())
+go!(s, 10)
+</code></pre>
+
+<p>Observe that all functions in EventSimulation receive <code>Scheduler</code> as an argument and therefore they have acces to current simulation time and simulation state.</p>
+<p>Additionally we have changed customer arrival behavior to random.</p>
+<p><strong>Exercise</strong>: <em>Try changing customer's arrival rate to the exponential distribution using <code>randexp</code> function. Next change time in system distribution to the Gamma distribution. You can find it in <code>Distributions</code> package.</em></p>
+<p><a id='Monitoring-simulation-1'></a></p>
+<h2 id="monitoring-simulation">Monitoring simulation</h2>
+<p>Let us calculate how many customers are present in the above system using custom <code>monitor</code>.</p>
+<pre><code>using EventSimulation
+
+mutable struct CounterState &lt;: AbstractState
+    count::Int
+    total_time::Float64
+    customer_time::Float64
+end
+
+function arrival(s)
+    register!(s, departure, 1.0)
+    s.state.count += 1
+end
+
+function departure(s)
+    s.state.count -= 1
+end
+
+function monitor(s, Δ)
+    s.state.total_time += Δ
+    s.state.customer_time += Δ * s.state.count
+end
+
+cs = CounterState(0, 0.0, 0.0)
+s = Scheduler(cs, Float64, monitor)
+
+srand(1)
+repeat_register!(s, arrival, x -&gt; rand())
+go!(s, 100_000)
+println(&quot;Average number of customers in a system is &quot;,
+        cs.customer_time/cs.total_time)
+</code></pre>
+
+<p><strong>Exercise</strong>: <em>Think if the obtained result is in line with <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little's law</a>. Try changing arrival rate and time in the system to check it. As a more advanced exercise make <code>monitor</code> collect data only when simulation time is greater or equal than 100 (i.e. discarding simulation burn-in period).</em></p>
               
             </div>
           </div>
