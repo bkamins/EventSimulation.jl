@@ -1,4 +1,4 @@
-# EventSimulation Tutorial
+# [EventSimulation Tutorial](@id tutorial)
 
 ## Installation
 
@@ -32,10 +32,8 @@ anonymous function that is registered. In its body `x.now` will be taken from
 the state of the scheduler when the anonymous function is invoked but `t` is
 fixed in enclosing scope of `arrived` function as the time of the arrival.
 
-!!! Exercise
-
-    Test what happens if you replace `$t` with `$(s.now)` in the anonymous
-    function. What is the reason of this behavior?
+**Exercise**: test what happens if you replace `$t` with `$(s.now)` in the
+anonymous function. What is the reason of this behavior?
 
 When using EventSimulation working with closures is often the simplest way
 to develop a simulation so it is important that you understand this example.

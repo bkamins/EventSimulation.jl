@@ -12,7 +12,7 @@ Intended as a support library for teaching basic principles of Discrete Event Si
 
 ## Examples
 
-A quick start tutorial can be found [here](tutorial.md).
+A quick start tutorial can be found [here](@ref tutorial).
 
 Examples contained in `/examples/` directory:
 * `mms_example.jl`: comparison of several implementations of M/M/s queue
@@ -31,8 +31,8 @@ process oriented DES engines.
 
 # Quck overview of EventSimulation functionality
 
-* General functionality
-    * `EventSimulation`
+1. General functionality
+
     * `Action`: information that a given function should be executed at given
       time
     * `AbstractState`: abstract type used for holding global simulation state
@@ -47,7 +47,9 @@ process oriented DES engines.
     * `interrupt!`: removes one given event from `Scheduler` queue
     * `terminate!`: removes all events from `Scheduler` queue
     * `go!`: executes the simulation
-* Containers
+
+2. Containers
+
     * `AbstractReservoir`: abstract type for defining reservoirs
     * `SimResource`: reservoir for divisible and homogeneous matter
     * `ResourceRequest`: information about request for a resource
@@ -57,34 +59,12 @@ process oriented DES engines.
     * `provide!`: add resource/object to reservoir
       (or remove resource from `SimResource`)
     * `withdraw!`: remove object from `SimQueue`
-* Utilities
+
+3. Utilities
+
     * `PriorityTime`: custom subtype of `Real` providing additional attribute
       `priority` to normal time. Useful for giving execution priority of events
       happening at the same time.
 
-# Documentation Types and functions defined in EventSimulation package
-
-```@docs
-EventSimulation
-Action
-AbstractState
-EmptyState
-Scheduler
-register!
-repeat_register!
-bulk_register!
-repeat_bulk_register!
-interrupt!
-terminate!
-go!
-AbstractReservoir
-SimResource
-ResourceRequest
-SimQueue
-dispatch!
-request!
-waive!
-provide!
-withdraw!
-PriorityTime
-```
+Full documentation of types and functions defined in EventSimulation package
+can be found [here](@ref reference).
