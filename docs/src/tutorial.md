@@ -32,10 +32,8 @@ anonymous function that is registered. In its body `x.now` will be taken from
 the state of the scheduler when the anonymous function is invoked but `t` is
 fixed in enclosing scope of `arrived` function as the time of the arrival.
 
-!!! note "Exercise"
-
-    Test what happens if you replace `$t` with `$(s.now)` in the
-    anonymous function. What is the reason of this behavior?
+**Exercise**: *Test what happens if you replace `$t` with `$(s.now)` in the
+anonymous function. What is the reason of this behavior?*
 
 When using EventSimulation working with closures is often the simplest way
 to develop a simulation so it is important that you understand this example.
@@ -64,10 +62,6 @@ put into event queue in time deltas defined by anonymous function `x -> 1.0`.
 Aslo observe that we have passed second argument `7` to function `go!` which
 will force unconditional termination of the simulation after this moment.
 
-!!! note "Exercise"
-
-    Think what would happen if the termination time would be omitted in the
-    expression `go!(s, 7)`.
-
-    How you could use function `terminate!` inside definition of `arrived` to
-    get a similar effect as . What would be the difference?
+**Exercise**: *Think what would happen if the termination time would be omitted in
+the expression `go!(s, 7)`. How you could use function `terminate!` inside
+definition of `arrived` to get a similar effect as . What would be the difference?*
