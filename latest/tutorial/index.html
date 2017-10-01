@@ -139,8 +139,7 @@ go!(s)
 </code></pre>
 
 <p>In this example five customers arrive at times 1, 2, ..., 5 and stay in the system for 1.5 time units. Observe that in <code>arrived</code> we use a closure to define anonymous function that is registered. In its body <code>x.now</code> will be taken from the state of the scheduler when the anonymous function is invoked but <code>t</code> is fixed in enclosing scope of <code>arrived</code> function as the time of the arrival.</p>
-<p>!!! note "Exercise"
-    Test what happens if you replace <code>$t</code> with <code>$(s.now)</code> in the anonymous function. What is the reason of this behavior?</p>
+<p><strong>Exercise</strong>: <em>Test what happens if you replace <code>$t</code> with <code>$(s.now)</code> in the anonymous function. What is the reason of this behavior?</em></p>
 <p>When using EventSimulation working with closures is often the simplest way to develop a simulation so it is important that you understand this example.</p>
 <p><a id='Defining-infinite-source-of-events-1'></a></p>
 <h2 id="defining-infinite-source-of-events">Defining infinite source of events</h2>
@@ -161,10 +160,7 @@ go!(s, 7)
 
 <p>In this example we show how <code>arrival</code> function can be scheduled to be repeatedly put into event queue in time deltas defined by anonymous function <code>x -&gt; 1.0</code>.</p>
 <p>Aslo observe that we have passed second argument <code>7</code> to function <code>go!</code> which will force unconditional termination of the simulation after this moment.</p>
-<p>!!! note "Exercise"
-    Think what would happen if the termination time would be omitted in the expression <code>go!(s, 7)</code>.</p>
-<pre><code>How you could use function `terminate!` inside definition of `arrived` to get a similar effect as . What would be the difference?
-</code></pre>
+<p><strong>Exercise</strong>: <em>Think what would happen if the termination time would be omitted in the expression <code>go!(s, 7)</code>. How you could use function <code>terminate!</code> inside definition of <code>arrived</code> to get a similar effect as . What would be the difference?</em></p>
               
             </div>
           </div>

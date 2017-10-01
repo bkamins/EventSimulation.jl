@@ -142,40 +142,34 @@
 <p><a id='Quck-overview-of-EventSimulation-functionality-1'></a></p>
 <h1 id="quck-overview-of-eventsimulation-functionality">Quck overview of EventSimulation functionality</h1>
 <p>General functionality</p>
-<pre><code>* `Action`: information that a given function should be executed at given
-  time
-* `AbstractState`: abstract type used for holding global simulation state
-* `EmptyState`: simplest empty concrete subtype of `AbstractState`
-* `Scheduler`
-* `register!`: puts `Action` into `Scheduler` queue
-* `repeat_register!`: puts `Action` into `Scheduler` queue repeatedly
-* `bulk_register!`: puts `Action` into `Scheduler` that will affect
-  multiple objects
-* `repeat_bulk_register!`: puts `Action` into `Scheduler` that will affect
-  multiple objects repeatedly
-* `interrupt!`: removes one given event from `Scheduler` queue
-* `terminate!`: removes all events from `Scheduler` queue
-* `go!`: executes the simulation
-</code></pre>
-
+<ul>
+<li><code>Action</code>: information that a given function should be executed at given time</li>
+<li><code>AbstractState</code>: abstract type used for holding global simulation state</li>
+<li><code>EmptyState</code>: simplest empty concrete subtype of <code>AbstractState</code></li>
+<li><code>Scheduler</code></li>
+<li><code>register!</code>: puts <code>Action</code> into <code>Scheduler</code> queue</li>
+<li><code>repeat_register!</code>: puts <code>Action</code> into <code>Scheduler</code> queue repeatedly</li>
+<li><code>bulk_register!</code>: puts <code>Action</code> into <code>Scheduler</code> that will affect multiple objects</li>
+<li><code>repeat_bulk_register!</code>: puts <code>Action</code> into <code>Scheduler</code> that will affect multiple objects repeatedly</li>
+<li><code>interrupt!</code>: removes one given event from <code>Scheduler</code> queue</li>
+<li><code>terminate!</code>: removes all events from <code>Scheduler</code> queue</li>
+<li><code>go!</code>: executes the simulation</li>
+</ul>
 <p>Containers</p>
-<pre><code>* `AbstractReservoir`: abstract type for defining reservoirs
-* `SimResource`: reservoir for divisible and homogeneous matter
-* `ResourceRequest`: information about request for a resource
-* `SimQueue`: reservoir for objects having unique identity
-* `request!`: registers demand for a resource/object
-* `waive!`: remove registered request from waiting list
-* `provide!`: add resource/object to reservoir
-  (or remove resource from `SimResource`)
-* `withdraw!`: remove object from `SimQueue`
-</code></pre>
-
+<ul>
+<li><code>AbstractReservoir</code>: abstract type for defining reservoirs</li>
+<li><code>SimResource</code>: reservoir for divisible and homogeneous matter</li>
+<li><code>ResourceRequest</code>: information about request for a resource</li>
+<li><code>SimQueue</code>: reservoir for objects having unique identity</li>
+<li><code>request!</code>: registers demand for a resource/object</li>
+<li><code>waive!</code>: remove registered request from waiting list</li>
+<li><code>provide!</code>: add resource/object to reservoir (or remove resource from <code>SimResource</code>)</li>
+<li><code>withdraw!</code>: remove object from <code>SimQueue</code></li>
+</ul>
 <p>Utilities</p>
-<pre><code>* `PriorityTime`: custom subtype of `Real` providing additional attribute
-  `priority` to normal time. Useful for giving execution priority of events
-  happening at the same time.
-</code></pre>
-
+<ul>
+<li><code>PriorityTime</code>: custom subtype of <code>Real</code> providing additional attribute <code>priority</code> to normal time. Useful for giving execution priority of events happening at the same time.</li>
+</ul>
 <p>Full documentation of types and functions defined in EventSimulation package can be found <a href="reference/#reference-1">here</a>.</p>
               
             </div>
@@ -227,5 +221,5 @@
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-10-01 12:08:18
+Build Date UTC : 2017-10-01 12:11:05
 -->
