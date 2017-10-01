@@ -13,7 +13,7 @@ Servers can get matter from the resource with optional maximum number of
 requests pending for fulfillment.
 
 Fields:
-* `quantiy`       current quantity in resource
+* `quantity`       current quantity in resource
 * `lo`            minimum quantity of resource
 * `hi`            maximum quantity of resource
 * `fifo_requests` if `true` `requests` is FIFO, otherwise LIFO

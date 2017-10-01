@@ -146,8 +146,67 @@ println("Average number of customers in a system is ",
         cs.customer_time/cs.total_time)
 ```
 
+Observe that `monitor` usually will modify simulation state to gather the
+simulation statistics. Other approaches could use global variables
+or variables defined in closure of `monitor`, but using simulation state
+is the recommended approach.
+
 **Exercise**: *Think if the obtained result is in line with
 [Little's law](https://en.wikipedia.org/wiki/Little%27s_law).
 Try changing arrival rate and time in the system to check it. As a more
 advanced exercise make `monitor` collect data only when simulation time
 is greater or equal than 100 (i.e. discarding simulation burn-in period).*
+
+## Introduction to resources
+Now we will consider two streams of agents. Supplier provides one unit
+of good every one unit of time. There are customers that arrive randomly
+and want to buy a random amount of good. Maximally two customers .
+```
+using EventSimulation
+
+mutable struct GoodState <: AbstractState
+    good::SimResource{Float64}
+end
+
+function delivery(s)
+    provide!(s, s.state.good, 1.0)
+    print_with_color(:green, "Delivered 1.0 at ", s.now, "\n")
+end
+
+function customer(s)
+    function leave(x)
+        println("Left at ", x.now, " with quantity ", round(demand, 4))
+    end
+    demand = rand()
+    print("Arrived at ", round(s.now, 4), " with demand ", round(demand, 4))
+    if !request!(s, s.state.good, demand, leave)[1]
+        print_with_color(:red, " but line was too long and left with nothing\n")
+    else
+        println(" and went into a queue")
+    end
+end
+
+function balance(s)
+    info("Amount of good in storage: ",
+         round(s.state.good.quantity, 4), " at time ", s.now)
+end
+
+s = Scheduler(GoodState(SimResource{Float64}(max_requests=2)))
+
+srand(1)
+repeat_register!(s, delivery, x -> 1.0)
+repeat_register!(s, customer, x -> rand())
+repeat_register!(s, balance, x -> x.now == 0 ? 1.000001 : 1.0)
+go!(s, 5)
+```
+
+Observe that fulfillment of pending requests by `SimResource` is immediate.
+This means that the amount is passed to a request from the container before
+the request event executed.
+
+**Exercise**: *We have used a fixed value of `0.000001` as an increment over an integer
+number to invoke `balance`. Rewrite the example using `PriorityTime` type in such a way
+that `balance` is invoked at integer times but with priority low enough.*
+
+This is the end of this introductory tutorial. More advanced features are covered
+in examples contained in `/examples/` directory.

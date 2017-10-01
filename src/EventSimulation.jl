@@ -51,8 +51,8 @@ Returns tuple of:
 * `true` if successfull and `false` when too many requests were made
 * `ResourceRequest` object created
 
+In `SimResource` function `request` must accept one argument `Scheduler`.
 In `SimQueue` function `request` must accept two arguments `Scheduler` and object.
-Returns `true` if successfull and `false` when too many requests were made.
 """
 function request! end
 
