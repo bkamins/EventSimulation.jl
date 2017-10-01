@@ -67,10 +67,17 @@
     <li class="toctree-l2"><a href="#quck-overview-of-eventsimulation-functionality">Quck overview of EventSimulation functionality</a></li>
     
 
-    <li class="toctree-l2"><a href="#documentation-types-and-functions-defined-in-eventsimulation-package">Documentation Types and functions defined in EventSimulation package</a></li>
-    
-
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="tutorial/">Tutorial</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="reference/">Reference</a>
 	    </li>
           
         </ul>
@@ -121,7 +128,7 @@
 </ul>
 <p><a id='Examples-1'></a></p>
 <h2 id="examples">Examples</h2>
-<p>A quick start tutorial can be found <a href="tutorial.md">here</a>.</p>
+<p>A quick start tutorial can be found <a href="tutorial/#tutorial-1">here</a>.</p>
 <p>Examples contained in <code>/examples/</code> directory:</p>
 <ul>
 <li><code>mms_example.jl</code>: comparison of several implementations of M/M/s queue</li>
@@ -134,15 +141,12 @@
 <p>The models that are reimplemnetation of SimPy run an order of magnitude (&gt;20x) faster than in <a href="https://bitbucket.org/simpy/simpy/">SimPy</a> or <a href="https://github.com/BenLauwens/SimJulia.jl">SimJulia</a> process oriented DES engines.</p>
 <p><a id='Quck-overview-of-EventSimulation-functionality-1'></a></p>
 <h1 id="quck-overview-of-eventsimulation-functionality">Quck overview of EventSimulation functionality</h1>
-<ul>
-<li>
 <p>General functionality</p>
 <ul>
-<li><code>EventSimulation</code></li>
 <li><code>Action</code>: information that a given function should be executed at given time</li>
 <li><code>AbstractState</code>: abstract type used for holding global simulation state</li>
 <li><code>EmptyState</code>: simplest empty concrete subtype of <code>AbstractState</code></li>
-<li><code>Scheduler</code></li>
+<li><code>Scheduler</code>: central object in the library jused to store information about event queue</li>
 <li><code>register!</code>: puts <code>Action</code> into <code>Scheduler</code> queue</li>
 <li><code>repeat_register!</code>: puts <code>Action</code> into <code>Scheduler</code> queue repeatedly</li>
 <li><code>bulk_register!</code>: puts <code>Action</code> into <code>Scheduler</code> that will affect multiple objects</li>
@@ -150,12 +154,10 @@
 <li><code>interrupt!</code>: removes one given event from <code>Scheduler</code> queue</li>
 <li><code>terminate!</code>: removes all events from <code>Scheduler</code> queue</li>
 <li><code>go!</code>: executes the simulation</li>
-<li>
+</ul>
 <p>Containers</p>
-</li>
-<li>
-<p><code>AbstractReservoir</code>: abstract type for defining reservoirs</p>
-</li>
+<ul>
+<li><code>AbstractReservoir</code>: abstract type for defining reservoirs</li>
 <li><code>SimResource</code>: reservoir for divisible and homogeneous matter</li>
 <li><code>ResourceRequest</code>: information about request for a resource</li>
 <li><code>SimQueue</code>: reservoir for objects having unique identity</li>
@@ -163,44 +165,23 @@
 <li><code>waive!</code>: remove registered request from waiting list</li>
 <li><code>provide!</code>: add resource/object to reservoir (or remove resource from <code>SimResource</code>)</li>
 <li><code>withdraw!</code>: remove object from <code>SimQueue</code></li>
-<li>
+</ul>
 <p>Utilities</p>
-</li>
-<li>
-<p><code>PriorityTime</code>: custom subtype of <code>Real</code> providing additional attribute <code>priority</code> to normal time. Useful for giving execution priority of events happening at the same time.</p>
-</li>
+<ul>
+<li><code>PriorityTime</code>: custom subtype of <code>Real</code> providing additional attribute <code>priority</code> to normal time. Useful for giving execution priority of events happening at the same time.</li>
 </ul>
-</li>
-</ul>
-<p><a id='Documentation-Types-and-functions-defined-in-EventSimulation-package-1'></a></p>
-<h1 id="documentation-types-and-functions-defined-in-eventsimulation-package">Documentation Types and functions defined in EventSimulation package</h1>
-<pre><code>EventSimulation
-Action
-AbstractState
-EmptyState
-Scheduler
-register!
-repeat_register!
-bulk_register!
-repeat_bulk_register!
-interrupt!
-terminate!
-go!
-AbstractReservoir
-SimResource
-ResourceRequest
-SimQueue
-dispatch!
-request!
-waive!
-provide!
-withdraw!
-PriorityTime
-</code></pre>
+<p>Full documentation of types and functions defined in EventSimulation package can be found <a href="reference/#reference-1">here</a>.</p>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial/" class="btn btn-neutral float-right" title="Tutorial">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
   
 
   <hr/>
@@ -227,6 +208,8 @@ PriorityTime
       
       
       
+        <span style="margin-left: 15px"><a href="tutorial/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
     </span>
 </div>
     <script src="./js/theme.js"></script>
@@ -238,5 +221,5 @@ PriorityTime
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-09-30 21:15:24
+Build Date UTC : 2017-10-01 19:24:32
 -->
