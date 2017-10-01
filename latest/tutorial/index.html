@@ -132,11 +132,7 @@ go!(s)
 </code></pre>
 
 <p>In this example five customers arrive at times 1, 2, ..., 5 and stay in the system for 1.5 time units. Observe that in <code>arrived</code> we use a closure to define anonymous function that is registered. In its body <code>x.now</code> will be taken from the state of the scheduler when the anonymous function is invoked but <code>t</code> is fixed in enclosing scope of <code>arrived</code> function as the time of the arrival.</p>
-<p>!!! Exercise</p>
-<pre><code>Test what happens if you replace `$t` with `$(s.now)` in the anonymous
-function. What is the reason of this behavior?
-</code></pre>
-
+<p><strong>Exercise</strong>: test what happens if you replace <code>$t</code> with <code>$(s.now)</code> in the anonymous function. What is the reason of this behavior?</p>
 <p>When using EventSimulation working with closures is often the simplest way to develop a simulation so it is important that you understand this example.</p>
               
             </div>
