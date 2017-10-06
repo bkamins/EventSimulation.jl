@@ -1,4 +1,4 @@
-import Base: +, -, ==, <, <=, convert, hash, promote_rule
+import Base: +, -, ==, <, <=, convert, hash, promote_rule, isfinite
 
 """
 Subtype of `Real` defining a lexicographically comparable pair of `Real`.
@@ -90,3 +90,5 @@ function <=(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
     x.time == y.time && x.priority <= y.priority && return true
     return false
 end
+
+isfinite(x::PriorityTime) = isfinite(x.time) && isfinite(x.priority)

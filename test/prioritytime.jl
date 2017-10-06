@@ -84,3 +84,7 @@ tc4 = Int16(2)
 @test ptc1 < tc4
 @test !(ptc1 >= tc4)
 @test !(ptc1 > tc4)
+
+@test isfinite(PriorityTime(1.0, 1))
+@test !isfinite(PriorityTime(NaN, 1.0))
+@test !isfinite(PriorityTime(1, Inf))

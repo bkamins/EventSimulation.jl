@@ -38,6 +38,15 @@ repeat_register!(s, f, ifun)
 go!(s, 50)
 @test rrv == [1,3,7,15,31]
 
+s = Scheduler()
+rrv = []
+f(x) = push!(rrv, x.now)
+ifun2(x) = length(rrv) < 5 ? x.now + 1 : NaN
+repeat_register!(s, f, ifun2)
+go!(s)
+@test length(rrv) == 5
+
+
 println("Testing ordered bulk_register!")
 s = Scheduler()
 v2 = []
@@ -73,6 +82,15 @@ v2t = []
 for i in 1.0:10.0, j in 1:5
     push!(v2t, (i, j))
 end
+
+@test v2 == v2t
+
+s = Scheduler()
+v2 = []
+who = [1:5;]
+repeat_bulk_register!(s, who, (a,b) -> push!(v2, (s.now, b)),
+    x -> length(v2) < length(v2t) ? 1.0 : Inf, false)
+go!(s)
 
 @test v2 == v2t
 
