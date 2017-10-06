@@ -23,6 +23,8 @@ Examples contained in `/examples/` directory:
 * `faxqueue.jl`: a two-stage fax queue model;
   adaptation of Nelson (2013): *Foundations and Methods of Stochastic Simulation*,
   chap. 4.6, example
+* `seq_queue.jl`: Experiment 4.1 from:
+  C.-H. Chen, L.H. Lee (2011): Stochastic Simulation Optimization
 
 The models that are reimplemnetation of SimPy run an order of magnitude (>20x)
 faster than in [SimPy](https://bitbucket.org/simpy/simpy/) or
