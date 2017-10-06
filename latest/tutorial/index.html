@@ -74,6 +74,12 @@
         
             <li><a class="toctree-l3" href="#introduction-to-resources">Introduction to resources</a></li>
         
+            <li><a class="toctree-l3" href="#infinite-delta-in-repeat_register">Infinite delta in repeat_register!</a></li>
+        
+            <li><a class="toctree-l3" href="#bulk-execution-of-events">Bulk execution of events</a></li>
+        
+            <li><a class="toctree-l3" href="#next-steps">Next steps</a></li>
+        
         </ul>
     
 
@@ -239,7 +245,7 @@ println(&quot;Average number of customers in a system is &quot;,
 <p><strong>Exercise</strong>: <em>Think if the obtained result is in line with <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little's law</a>. Try changing arrival rate and time in the system to check it. As a more advanced exercise make <code>monitor</code> collect data only when simulation time is greater or equal than 100 (i.e. discarding simulation burn-in period).</em></p>
 <p><a id='Introduction-to-resources-1'></a></p>
 <h2 id="introduction-to-resources">Introduction to resources</h2>
-<p>Now we will consider two streams of agents. Supplier provides one unit of good every one unit of time. There are customers that arrive randomly and want to buy a random amount of good. Maximally two customers .</p>
+<p>Now we will consider two streams of agents. Supplier provides one unit of good every one unit of time. There are customers that arrive randomly and want to buy a random amount of good. Maximally two customers can wait in the line.</p>
 <pre><code>using EventSimulation
 
 mutable struct GoodState &lt;: AbstractState
@@ -280,6 +286,61 @@ go!(s, 5)
 
 <p>Observe that fulfillment of pending requests by <code>SimResource</code> is immediate. This means that the amount is passed to a request from the container before the request event executed.</p>
 <p><strong>Exercise</strong>: <em>We have used a fixed value of <code>0.000001</code> as an increment over an integer number to invoke <code>balance</code>. Rewrite the example using <code>PriorityTime</code> type in such a way that <code>balance</code> is invoked at integer times but with priority low enough.</em></p>
+<p><a id='Infinite-delta-in-repeat_register!-1'></a></p>
+<h2 id="infinite-delta-in-repeat_register">Infinite delta in <code>repeat_register!</code></h2>
+<p>In general EventSimulation does not check the values passed to the engine in order to maximize execution speed. The only exception is <code>interval</code> argument of <code>repeat_register</code> function. If it returns a value that is not finite then the repeated scheduling of events is interrupted. Here is a simple example</p>
+<pre><code>using EventSimulation
+
+mutable struct Jumps &lt;: AbstractState
+    n::Int
+end
+
+jump(s) = s.state.n+=1
+next(s) = s.now &gt;= 1.0 ? NaN : rand()
+
+function main()
+    s = Scheduler(Jumps(0))
+    repeat_register!(s, jump, next)
+    go!(s)
+    s.state.n
+end
+
+println(mean(main() for i in 1:10^6))
+</code></pre>
+
+<p>The above code implements a well known puzzle. Assume that we have a bug that gets hungry every <code>rand()</code> time units and eats then. Assume that the fist time it eats is 0. What is the expected number of times it will it till time reaches 1.0? Run the code to learn the answer (if you did not know the puzzle before). Observe that returning <code>NaN</code> from <code>next</code> forces the simulation to stop.</p>
+<p><a id='Bulk-execution-of-events-1'></a></p>
+<h2 id="bulk-execution-of-events">Bulk execution of events</h2>
+<p>EventSimulation allows you to plan execution of a batch of actions at the same time. They can be either executed in a predefined order or in random order (this example actually does not require DES, but is a MWE of <code>bulk_register!</code>).</p>
+<pre><code>using EventSimulation
+
+mutable struct Airplane &lt;: AbstractState
+    free::Set{Int}
+    ok::Bool
+end
+
+function sit(s, i)
+    s.state.ok = i in s.state.free
+    pop!(s.state.free, s.state.ok ? i : rand(s.state.free))
+end
+
+function main(n)
+    s = Scheduler(Airplane(Set(1:n), false))
+    tickets = randperm(n)
+    tickets[1] = rand(1:n)
+    bulk_register!(s, tickets, sit, 0.0)
+    go!(s)
+    s.state.ok
+end
+
+for n in [10, 50, 250]
+    println(n, &quot;\t&quot;, mean(main(n) for i in 1:10^4))
+end
+</code></pre>
+
+<p>Another simple puzzle. We have an airplane with <code>n</code> seats and <code>n</code> customers. Every customer has a ticket with seat number. It is represented by a vector <code>tickets</code>. Customers enter the airplane in the order of the vector <code>tickets</code> and everyone tries to sit on her own seat. Unfortunately <code>tickets[1] = rand(1:n)</code> so the firs customer has forgotten her seat number and have chosen a random seat. When the following customers enter the airplane and find their seat taken they pick a random free seat. The question is what is the probability that last customer that enters the plane finds her seat taken as a function of <code>n</code>. Run the simulation to find out if you do not know the answer!</p>
+<p><a id='Next-steps-1'></a></p>
+<h2 id="next-steps">Next steps</h2>
 <p>This is the end of this introductory tutorial. More advanced features are covered in examples contained in <code>/examples/</code> directory.</p>
               
             </div>
