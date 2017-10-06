@@ -141,6 +141,7 @@ end
 Put `what` to `s.event_queue` repeatedly in time intervals specified by
 `interval` function, which must accept one argument of type `Scheduler`.
 `what` must accept exactly one argument of type `Scheduler`.
+`interval` function is called after the previous event was executed.
 Returns `nothing`.
 Calling `terminate!` in function `interval` will not stop the simulation.
 Instead, if `interval` returns interval that is not finite the action
@@ -148,9 +149,9 @@ is not scheduled and `repeat_register` will effectively terminate.
 """
 function repeat_register!(s::Scheduler, what::Function, interval::Function)
     function wrap_what(x)
+        what(x)
         i = interval(x)
         isfinite(i) && register!(x, wrap_what, i)
-        what(x)
     end
     i = interval(s)
     isfinite(i) && register!(s, wrap_what, i)
@@ -189,21 +190,20 @@ function bulk_register!(s::Scheduler{S, T}, who::AbstractVector,
 end
 
 """
-    repeat_bulk_register!(s, who, what, Δ, randomize)
+    repeat_bulk_register!(s, who, what, interval, randomize)
 
 Repeat `bulk_register!` at time intervals specified by `interval` function,
 which must accept `Scheduler` argument.
+`interval` function is called after the previous event was executed.
 `what` must accept exactly two arguments of type `Scheduler` and `typeof(who)`.
 Returns `nothing`.
 Calling `terminate!` in function `interval` will not stop the simulation.
 Instead, if `interval` returns interval that is not finite the action
-is not scheduled and `repeat_register` will effectively terminate.
+is not scheduled and `repeat_bulk_register` will effectively terminate.
 """
 function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function,
                                interval::Function, randomize::Bool=false)
     function wrap_bulk_what(x)
-        i = interval(x)
-        isfinite(i) && register!(x, wrap_bulk_what, i)
         if randomize
             for i in randperm(length(who))
                 what(x, who[i])
@@ -213,6 +213,8 @@ function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function
                 what(x, w)
             end
         end
+        i = interval(x)
+        isfinite(i) && register!(x, wrap_bulk_what, i)
     end
     i = interval(s)
     isfinite(i) && register!(s, wrap_bulk_what, i)
