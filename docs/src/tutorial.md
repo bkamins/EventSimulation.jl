@@ -160,7 +160,7 @@ is greater or equal than 100 (i.e. discarding simulation burn-in period).*
 ## Introduction to resources
 Now we will consider two streams of agents. Supplier provides one unit
 of good every one unit of time. There are customers that arrive randomly
-and want to buy a random amount of good. Maximally two customers .
+and want to buy a random amount of good. Maximally two customers can wait in the line.
 ```
 using EventSimulation
 
@@ -207,6 +207,85 @@ the request event executed.
 **Exercise**: *We have used a fixed value of `0.000001` as an increment over an integer
 number to invoke `balance`. Rewrite the example using `PriorityTime` type in such a way
 that `balance` is invoked at integer times but with priority low enough.*
+
+## Infinite delta in `repeat_register!`
+
+In general EventSimulation does not check the values passed to the engine in order
+to maximize execution speed. The only exception is `interval` argument of
+`repeat_register` function. If it returns a value that is not finite then the repeated
+scheduling of events is interrupted. Here is a simple example
+
+```
+using EventSimulation
+
+mutable struct Jumps <: AbstractState
+    n::Int
+end
+
+jump(s) = s.state.n+=1
+next(s) = s.now >= 1.0 ? NaN : rand()
+
+function main()
+    s = Scheduler(Jumps(0))
+    repeat_register!(s, jump, next)
+    go!(s)
+    s.state.n
+end
+
+println(mean(main() for i in 1:10^6))
+```
+
+The above code implements a well known puzzle.
+Assume that we have a bug that gets hungry every `rand()` time units and eats then.
+Assume that the fist time it eats is 0.
+What is the expected number of times it will it till time reaches 1.0?
+Run the code to learn the answer (if you did not know the puzzle before).
+Observe that returning `NaN` from `next` forces the simulation to stop.
+
+## Bulk execution of events
+
+EventSimulation allows you to plan execution of a batch of actions at the same time.
+They can be either executed in a predefined order or in random order
+(this example actually does not require DES, but is a MWE of `bulk_register!`).
+
+```
+using EventSimulation
+
+mutable struct Airplane <: AbstractState
+    free::Set{Int}
+    ok::Bool
+end
+
+function sit(s, i)
+    s.state.ok = i in s.state.free
+    pop!(s.state.free, s.state.ok ? i : rand(s.state.free))
+end
+
+function main(n)
+    s = Scheduler(Airplane(Set(1:n), false))
+    tickets = randperm(n)
+    tickets[1] = rand(1:n)
+    bulk_register!(s, tickets, sit, 0.0)
+    go!(s)
+    s.state.ok
+end
+
+for n in [10, 50, 250]
+    println(n, "\t", mean(main(n) for i in 1:10^4))
+end
+```
+
+Another simple puzzle. We have an airplane with `n` seats and `n` customers.
+Every customer has a ticket with seat number. It is represented by a vector `tickets`.
+Customers enter the airplane in the order of the vector `tickets` and everyone tries to
+sit on her own seat. Unfortunately `tickets[1] = rand(1:n)` so the firs customer has
+forgotten her seat number and have chosen a random seat. When the following customers
+enter the airplane and find their seat taken they pick a random free seat.
+The question is what is the probability that last customer that enters the plane finds
+her seat taken as a function of `n`.
+Run the simulation to find out if you do not know the answer!
+
+## Next steps
 
 This is the end of this introductory tutorial. More advanced features are covered
 in examples contained in `/examples/` directory.
