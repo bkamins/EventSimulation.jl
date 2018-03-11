@@ -205,8 +205,8 @@ function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function
                                interval::Function, randomize::Bool=false)
     function wrap_bulk_what(x)
         if randomize
-            for i in randperm(length(who))
-                what(x, who[i])
+            for j in randperm(length(who))
+                what(x, who[j])
             end
         else
             for w in who
