@@ -165,7 +165,7 @@ Put event at time `s.now+Δ` to `s.event_queue`
 that will execute `what(scheduler, w)` for all `w` in `who`.
 If `randomize` is `false` then `who` is traversed in natural order
 otherwise it is traversed in random order.
-`what` must accept exactly two arguments of type `Scheduler` and `typeof(who)`.
+`what` must accept exactly two arguments of type `Scheduler` and `eltype(who)`.
 The function does not check if `Δ` is a valid (finite) number.
 Returns inserted bulk `Action`.
 
@@ -224,7 +224,7 @@ end
 """
     interrupt!(s, a)
 
-First occurrence of action `a` is replaced by no-op in event queue.
+First occurrence of `Action` `a` is replaced by no-op in event queue.
 This way there is no need to fix heap in this operation and it is fast.
 Returns `true` if `a` was found in queue and `false` otherwise.
 """
@@ -271,3 +271,4 @@ function go!(s::Scheduler, until::Real=Inf)
         end
     end
 end
+

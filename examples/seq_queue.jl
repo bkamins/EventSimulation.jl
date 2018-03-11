@@ -32,3 +32,4 @@ for i in 1:10
     v = mean(exec(10+i, 21-i) for j in 1:2048)
     println((10+i, 21-i),":\t", v)
 end
+

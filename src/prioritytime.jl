@@ -92,3 +92,4 @@ function <=(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1, T2}
 end
 
 isfinite(x::PriorityTime) = isfinite(x.time) && isfinite(x.priority)
+
