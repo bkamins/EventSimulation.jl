@@ -48,7 +48,7 @@ end
 
 function request!(s::Scheduler, q::SimQueue, request::Function)
     length(q.requests) < q.max_requests || return false
-    qend = q.fifo_requests ? unshift! : push!
+    qend = q.fifo_requests ? pushfirst! : push!
     qend(q.requests, request)
     dispatch!(s, q)
     return true
@@ -63,7 +63,7 @@ end
 
 function provide!(s::Scheduler, q::SimQueue{O}, object::O) where O
     if length(q.queue) < q.max_queue
-        qend = q.fifo_queue ? unshift! : push!
+        qend = q.fifo_queue ? pushfirst! : push!
         qend(q.queue, object)
         dispatch!(s, q)
         return true

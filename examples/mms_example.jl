@@ -1,5 +1,6 @@
 using EventSimulation
-using Base.Test
+using Random
+using Test
 
 # Objectives of the example:
 # * show how SimQueue and SimResource objects can be used
@@ -17,8 +18,8 @@ end
 
 # hardcoded M/M/1 queue
 function run_mm1_fast(until, ar, sr, seed)
-    tic()
-    ma, ms = randjump(MersenneTwister(seed), 2)
+    start_time = time_ns()
+    ma, ms = randjump(MersenneTwister(seed), big(10) ^ 20, 2)
     queue = Vector{Float64}()
     nextArrival = randexp(ma) / ar
     nextDeparture = Inf
@@ -41,7 +42,7 @@ function run_mm1_fast(until, ar, sr, seed)
             now = nextDeparture
             if now <= until
                 push!(msg, "D $now")
-                totalWait += nextDeparture - shift!(queue)
+                totalWait += nextDeparture - popfirst!(queue)
                 totalCount += 1
             end
             if isempty(queue)
@@ -51,7 +52,7 @@ function run_mm1_fast(until, ar, sr, seed)
             end
         end
     end
-    println("MM1 fast time: ", toq())
+    println("MM1 fast time: ", (time_ns()-start_time)/10^9)
     return totalWait/totalCount, totalCount, msg
 end
 
@@ -66,7 +67,7 @@ mutable struct StateQ <: AbstractState
     ms::MersenneTwister
     msg::Vector{String}
     function StateQ(ar, sr)
-        ma, ms = randjump(MersenneTwister(1), 2)
+        ma, ms = randjump(MersenneTwister(1), big(10) ^ 20, 2)
         new(Float64(ar), Float64(sr), SimQueue{Float64}(),
             0, 0.0, ma, ms, String[])
     end
@@ -89,14 +90,14 @@ function endserviceQ!(s::Scheduler, a::Float64)
 end
 
 function run_mms_queue(until, ar, sr, count)
-    tic()
+    start_time = time_ns()
     s = Scheduler(StateQ(ar, sr))
     repeat_register!(s, arrivalQ!, x -> randexp(x.state.ma) / x.state.ar)
     for i in 1:count
         request!(s, s.state.q, startserviceQ!)
     end
     go!(s, until)
-    println("MM$count queue time: ", toq())
+    println("MM$count queue time: ", (time_ns() - start_time)/10^9)
     return s.state.tin/s.state.tcust, s.state.tcust, s.state.msg 
 end
 
@@ -113,7 +114,7 @@ mutable struct StateR <: AbstractState
     ms::MersenneTwister
     msg::Vector{String}
     function StateR(ar, sr)
-        ma, ms = randjump(MersenneTwister(1), 2)
+        ma, ms = randjump(MersenneTwister(1), big(10) ^ 20, 2)
         new(Float64(ar), Float64(sr), SimResource{Int}(),
             Vector{Float64}(), 0, 0.0, ma, ms, String[])
     end
@@ -134,20 +135,20 @@ function endserviceR!(s::Scheduler)
     s.state.tcust += 1
     # use s.state.tin only for count==1, otherwise it is inexact
     # as customer ordering migh have changed during the service
-    s.state.tin += s.now - shift!(s.state.ars)
+    s.state.tin += s.now - popfirst!(s.state.ars)
     push!(s.state.msg, "D $(s.now)")
     request!(s, s.state.r, 1, startserviceR!)
 end
 
 function run_mms_resource(until, ar, sr, count)
-    tic()
+    start_time = time_ns()
     s = Scheduler(StateR(ar, sr))
     register!(s, arrivalR!, randexp(s.state.ma) / s.state.ar)
     for i in 1:count
         request!(s, s.state.r, 1, startserviceR!)
     end
     go!(s, until)
-    println("MM$count resource time: ", toq())
+    println("MM$count resource time: ", (time_ns()-start_time)/10^9)
     # have to handle shortcomming of resource
     return (count == 1 ? s.state.tin/s.state.tcust : NaN,
             s.state.tcust, s.state.msg)

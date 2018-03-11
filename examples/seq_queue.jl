@@ -1,6 +1,7 @@
 # Experiment 4.1 from:
 # C.-H. Chen, L.H. Lee: Stochastic Simulation Optimization, World Scientific, 2011
 
+using Random
 using EventSimulation
 using Distributions
 

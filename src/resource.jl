@@ -61,7 +61,7 @@ function request!(s::Scheduler, r::SimResource{Q}, quantity::Q,
                   request::Function) where Q
     rr = ResourceRequest{Q}(quantity, request)
     length(r.requests) < r.max_requests || return false, rr
-    qend = r.fifo_requests ? unshift! : push!
+    qend = r.fifo_requests ? pushfirst! : push!
     qend(r.requests, rr)
     dispatch!(s, r)
     return true, rr
