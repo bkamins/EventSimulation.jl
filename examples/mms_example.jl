@@ -1,3 +1,5 @@
+module MMS_Example
+
 using EventSimulation
 using Random
 using Test
@@ -154,27 +156,33 @@ function run_mms_resource(until, ar, sr, count)
             s.state.tcust, s.state.msg)
 end
 
-println("Test of M/M/1 queue")
-t_f = run_mm1_fast(100_000, 0.8, 1.4, 1)
-t_q = run_mms_queue(100_000, 0.8, 1.4, 1)
-t_r = run_mms_resource(100_000, 0.8, 1.4, 1)
-t_x = run_mms_exact(0.8, 1.4, 1)
+@testset "Test of M/M/1 queue" begin
+    t_f = run_mm1_fast(100_000, 0.8, 1.4, 1)
+    t_q = run_mms_queue(100_000, 0.8, 1.4, 1)
+    t_r = run_mms_resource(100_000, 0.8, 1.4, 1)
+    t_x = run_mms_exact(0.8, 1.4, 1)
 
-@test t_f == t_q == t_r
-@test isapprox(t_x, t_r[1], atol=0.1)
+    @test t_f == t_q == t_r
+    @test isapprox(t_x, t_r[1], atol=0.1)
+end
 
-println("Test of M/M/2 queue")
-t2_q = run_mms_queue(100_000, 0.8, 0.7, 2)
-t2_r = run_mms_resource(100_000, 0.8, 0.7, 2)
-t2_x = run_mms_exact(0.8, 0.7, 2)
+@testset "Test of M/M/2 queue" begin
+    t2_q = run_mms_queue(100_000, 0.8, 0.7, 2)
+    t2_r = run_mms_resource(100_000, 0.8, 0.7, 2)
+    t2_x = run_mms_exact(0.8, 0.7, 2)
 
-@test t2_q[2:3] == t2_r[2:3]
-@test isapprox(t2_x, t2_q[1], atol=0.1)
+    @test t2_q[2:3] == t2_r[2:3]
+    @test isapprox(t2_x, t2_q[1], atol=0.1)
+end
 
-println("Test of M/M/5 queue")
-t5_q = run_mms_queue(100_000, 0.8, 0.2, 5)
-t5_r = run_mms_resource(100_000, 0.8, 0.2, 5)
-t5_x = run_mms_exact(0.8, 0.2, 5)
+@testset "Test of M/M/5 queue" begin
+    t5_q = run_mms_queue(100_000, 0.8, 0.2, 5)
+    t5_r = run_mms_resource(100_000, 0.8, 0.2, 5)
+    t5_x = run_mms_exact(0.8, 0.2, 5)
 
-@test t5_q[2:3] == t5_r[2:3]
-@test isapprox(t5_x, t5_q[1], atol=0.2)
+    @test t5_q[2:3] == t5_r[2:3]
+    @test isapprox(t5_x, t5_q[1], atol=0.2)
+end
+
+end # module
+

@@ -1,5 +1,8 @@
+module MM1_Example
+
 using EventSimulation
-using Base.Test
+using Random
+using Test
 
 # Objectives of the example:
 # * show basic use of monitor function
@@ -61,5 +64,9 @@ function run(ar, sr)
     return(maxdiff)
 end
 
-println("Test of M/M/1 queue with monitor")
-@test run(1.5, 3.5) < 0.005
+@testset "Test of M/M/1 queue with monitor" begin
+    @test run(1.5, 3.5) < 0.005
+end
+
+end # module
+
