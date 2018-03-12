@@ -87,7 +87,6 @@ function provide! end
 
 include("resource.jl")
 include("queue.jl")
-
 include("prioritytime.jl")
 
 end # module

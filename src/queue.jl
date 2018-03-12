@@ -55,8 +55,8 @@ function request!(s::Scheduler, q::SimQueue, request::Function)
 end
 
 function waive!(q::SimQueue, request::Function)
-    idx = findfirst(q.requests, request)
-    idx == 0 && return false
+    idx = findfirst(equalto(request), q.requests)
+    isa(idx, Nothing) || return false
     deleteat!(q.requests, idx)
     return true
 end
@@ -79,8 +79,8 @@ Allows to remove first occurrence that would be served of `object` from `SimQueu
 Returns `true` on success and `false` if `object` was not found.
 """
 function withdraw!(q::SimQueue{O}, object::O) where O
-    idx = findfirst(q.queue, object)
-    idx == 0 && return false
+    idx = findfirst(equalto(object), q.queue)
+    isa(idx, Nothing) || return false
     deleteat!(q.queue, idx)
     return true
 end

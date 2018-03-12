@@ -144,17 +144,17 @@ Put `what` to `s.event_queue` repeatedly in time intervals specified by
 `interval` function is called after the previous event was executed.
 Returns `nothing`.
 Calling `terminate!` in function `interval` will not stop the simulation.
-Instead, if `interval` returns interval that is not finite the action
+Instead, if `interval` returns `nothing` the action
 is not scheduled and `repeat_register` will effectively terminate.
 """
 function repeat_register!(s::Scheduler, what::Function, interval::Function)
     function wrap_what(x)
         what(x)
         i = interval(x)
-        isfinite(i) && register!(x, wrap_what, i)
+        isa(i, Nothing) || register!(x, wrap_what, i)
     end
     i = interval(s)
-    isfinite(i) && register!(s, wrap_what, i)
+    isa(i, Nothing) || register!(s, wrap_what, i)
     nothing
 end
 
@@ -198,8 +198,8 @@ which must accept `Scheduler` argument.
 `what` must accept exactly two arguments of type `Scheduler` and `typeof(who)`.
 Returns `nothing`.
 Calling `terminate!` in function `interval` will not stop the simulation.
-Instead, if `interval` returns interval that is not finite the action
-is not scheduled and `repeat_bulk_register` will effectively terminate.
+Instead, if `interval` returns `nothing` the action
+is not scheduled and `repeat_register` will effectively terminate.
 """
 function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function,
                                interval::Function, randomize::Bool=false)
@@ -214,10 +214,10 @@ function repeat_bulk_register!(s::Scheduler, who::AbstractVector, what::Function
             end
         end
         i = interval(x)
-        isfinite(i) && register!(x, wrap_bulk_what, i)
+        isa(i, Nothing) || register!(x, wrap_bulk_what, i)
     end
     i = interval(s)
-    isfinite(i) && register!(s, wrap_bulk_what, i)
+    isa(i, Nothing) || register!(s, wrap_bulk_what, i)
     nothing
 end
 
@@ -229,8 +229,8 @@ This way there is no need to fix heap in this operation and it is fast.
 Returns `true` if `a` was found in queue and `false` otherwise.
 """
 function interrupt!(s::Scheduler, a::Action)
-    i = findfirst(s.event_queue, a)
-    i == 0 && return false
+    i = findfirst(equalto(a), s.event_queue)
+    isa(i, Nothing) && return false
     s.event_queue[i] = Action(x -> nothing, s.event_queue[i].when)
     return true
 end
