@@ -69,7 +69,7 @@ end
 
 function waive!(r::SimResource{Q}, res_request::ResourceRequest{Q}) where Q
     idx = findfirst(equalto(res_request), r.requests)
-    isa(idx, Nothing) || return false
+    isa(idx, Nothing) && return false
     deleteat!(r.requests, idx)
     return true
 end

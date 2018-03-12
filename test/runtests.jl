@@ -1,5 +1,6 @@
 using EventSimulation
-using Base.Test
+using Test
+using Random
 
 tests = ["core",
          "prioritytime",
@@ -16,3 +17,4 @@ for t in tests
     println(" * $(tfile) ...")
     include(tfile)
 end
+

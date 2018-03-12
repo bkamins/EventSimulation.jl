@@ -83,3 +83,4 @@ provide!(s, q, 3)
 @test withdraw!(q, 1)
 @test withdraw!(q, 3)
 @test isempty(q.queue)
+

@@ -56,7 +56,7 @@ end
 
 function waive!(q::SimQueue, request::Function)
     idx = findfirst(equalto(request), q.requests)
-    isa(idx, Nothing) || return false
+    isa(idx, Nothing) && return false
     deleteat!(q.requests, idx)
     return true
 end
@@ -80,7 +80,7 @@ Returns `true` on success and `false` if `object` was not found.
 """
 function withdraw!(q::SimQueue{O}, object::O) where O
     idx = findfirst(equalto(object), q.queue)
-    isa(idx, Nothing) || return false
+    isa(idx, Nothing) && return false
     deleteat!(q.queue, idx)
     return true
 end
