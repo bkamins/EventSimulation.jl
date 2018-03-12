@@ -13,4 +13,5 @@
 
 Intended as a support library for teaching basic principles of Discrete Event Simulation.
 
-The last package version that supports Julia 0.6.2 is 0.3.3. Following version support Julia 0.7.
+The last package version that supports Julia 0.6.2 is 0.3.3. Versions starting with 0.4.0 support Julia 0.7+.
+
