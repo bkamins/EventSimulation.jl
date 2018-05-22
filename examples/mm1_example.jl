@@ -56,8 +56,8 @@ function run(ar, sr)
     ρ = ar / sr
     maxdiff = 0.0 # calculated for accuracy testing purposes
     for k in ks
-        em = round(q.load_data[k]/s, 4)
-        th = round((1-ρ)*ρ^k, 4)
+        em = round(q.load_data[k]/s, digits=4)
+        th = round((1-ρ)*ρ^k, digits=4)
         maxdiff = max(maxdiff, abs(em-th))
         println("$k\t=> ", rpad(em,6), "\t", th)
     end
