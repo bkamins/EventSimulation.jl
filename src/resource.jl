@@ -68,7 +68,7 @@ function request!(s::Scheduler, r::SimResource{Q}, quantity::Q,
 end
 
 function waive!(r::SimResource{Q}, res_request::ResourceRequest{Q}) where Q
-    idx = findfirst(equalto(res_request), r.requests)
+    idx = findfirst(isequal(res_request), r.requests)
     isa(idx, Nothing) && return false
     deleteat!(r.requests, idx)
     return true

@@ -229,7 +229,7 @@ This way there is no need to fix heap in this operation and it is fast.
 Returns `true` if `a` was found in queue and `false` otherwise.
 """
 function interrupt!(s::Scheduler, a::Action)
-    i = findfirst(equalto(a), s.event_queue)
+    i = findfirst(isequal(a), s.event_queue)
     isa(i, Nothing) && return false
     s.event_queue[i] = Action(x -> nothing, s.event_queue[i].when)
     return true
