@@ -1,3 +1,4 @@
+using Statistics
 
 @testset "Testing core Scheduler creation" begin
     es = EmptyState()

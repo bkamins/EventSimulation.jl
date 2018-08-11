@@ -271,4 +271,3 @@ function go!(s::Scheduler, until::Real=Inf)
         end
     end
 end
-

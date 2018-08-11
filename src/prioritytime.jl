@@ -90,4 +90,3 @@ function <=(x::PriorityTime{T1,T2}, y::PriorityTime{T1,T2}) where {T1<:Real, T2<
     x.time == y.time && x.priority <= y.priority && return true
     return false
 end
-

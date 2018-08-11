@@ -82,4 +82,3 @@ function provide!(s::Scheduler, r::SimResource{Q}, quantity::Q) where Q
     dispatch!(s, r)
     return added # return how much was added
 end
-
