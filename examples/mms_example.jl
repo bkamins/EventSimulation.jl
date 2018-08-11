@@ -3,6 +3,7 @@ module MMS_Example
 using EventSimulation
 using Random
 using Test
+using Future: randjump
 
 # Objectives of the example:
 # * show how SimQueue and SimResource objects can be used
@@ -21,7 +22,8 @@ end
 # hardcoded M/M/1 queue
 function run_mm1_fast(until, ar, sr, seed)
     start_time = time_ns()
-    ma, ms = randjump(MersenneTwister(seed), big(10) ^ 20, 2)
+    ma = MersenneTwister(seed)
+    ms = randjump(ma, big(10)^20)
     queue = Vector{Float64}()
     nextArrival = randexp(ma) / ar
     nextDeparture = Inf
@@ -69,7 +71,8 @@ mutable struct StateQ <: AbstractState
     ms::MersenneTwister
     msg::Vector{String}
     function StateQ(ar, sr)
-        ma, ms = randjump(MersenneTwister(1), big(10) ^ 20, 2)
+        ma = MersenneTwister(1)
+        ms = randjump(ma, big(10)^20)
         new(Float64(ar), Float64(sr), SimQueue{Float64}(),
             0, 0.0, ma, ms, String[])
     end
@@ -116,7 +119,8 @@ mutable struct StateR <: AbstractState
     ms::MersenneTwister
     msg::Vector{String}
     function StateR(ar, sr)
-        ma, ms = randjump(MersenneTwister(1), big(10) ^ 20, 2)
+        ma = MersenneTwister(1)
+        ms = randjump(ma, big(10)^20)
         new(Float64(ar), Float64(sr), SimResource{Int}(),
             Vector{Float64}(), 0, 0.0, ma, ms, String[])
     end
