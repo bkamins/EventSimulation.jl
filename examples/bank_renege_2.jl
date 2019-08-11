@@ -1,5 +1,7 @@
 using EventSimulation
 using Distributions
+using Printf
+using Random
 
 # Objectives of the example:
 # * show how SimQueue object can be used
@@ -74,6 +76,6 @@ function run(ccount, report)
     println("Renege probability: ", bs.reneged_count / bs.all_cust)
 end
 
-srand(1)
+Random.seed!(1)
 @time run(10, true)
 @time run(1_000_000, false)

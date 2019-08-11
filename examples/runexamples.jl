@@ -1,8 +1,8 @@
 d = readdir()
 
 for f in d
-    if isfile(f) && ismatch(r"\.jl$", f) && f != "runexamples.jl"
-        println("\n*** Running: $f ***")
+    if isfile(f) && occursin(r"\.jl$", f) && f != "runexamples.jl"
+        println("\n\n*** Running: $f ***")
         run(`julia $f`)
     end
 end

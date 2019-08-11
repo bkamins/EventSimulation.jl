@@ -1,5 +1,6 @@
 using EventSimulation
 using Distributions
+using Printf
 
 # Objectives of the example:
 # * show how SimQueue object can be used
@@ -74,7 +75,7 @@ function reprun(reps, report::Bool, stats::Bool)
     println("\tmean\tsd\tmin\tmax")
 
     # total time to terminate
-    tt = maximum(view(res, 1:3, :), 1)
+    tt = maximum(view(res, 1:3, :), dims=1)
     @printf("finish\t%6.3f\t%5.3f\t%6.3f\t%6.3f\n", mean(tt), std(tt),
             minimum(tt), maximum(tt))
 
@@ -84,7 +85,7 @@ function reprun(reps, report::Bool, stats::Bool)
         @printf("mv %d\t%6.3f\t%5.3f\t%6.3f\t%6.3f\n", i, mean(v), std(v),
                 minimum(v), maximum(v))
     end
-    
+
     # reneged customers per movie
     for i in 1:3
         v = view(res, i+3, :)

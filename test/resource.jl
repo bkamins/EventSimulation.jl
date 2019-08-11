@@ -46,4 +46,3 @@ end
     @test waive!(r, rr3)
     @test isempty(r.requests)
 end
-

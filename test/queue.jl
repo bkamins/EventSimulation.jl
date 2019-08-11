@@ -81,4 +81,3 @@ end
     @test withdraw!(q, 3)
     @test isempty(q.queue)
 end
-

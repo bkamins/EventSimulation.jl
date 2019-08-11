@@ -103,7 +103,7 @@ function run_mms_queue(until, ar, sr, count)
     end
     go!(s, until)
     println("MM$count queue time: ", (time_ns() - start_time)/10^9)
-    return s.state.tin/s.state.tcust, s.state.tcust, s.state.msg 
+    return s.state.tin/s.state.tcust, s.state.tcust, s.state.msg
 end
 
 # Implementation of M/M/s queue using SimResource
@@ -189,4 +189,3 @@ end
 end
 
 end # module
-

@@ -1,5 +1,3 @@
-__precompile__()
-
 """
 EventSimulation is an event-based discrete event simulation engine.
 """

@@ -2,8 +2,9 @@ using Statistics
 
 @testset "Testing core Scheduler creation" begin
     es = EmptyState()
+    f = (a,b)->nothing
     sReal = Scheduler{EmptyState, Real}(1.2, Vector{EventSimulation.Action{Real}}(),
-                                        es, (a,b)->nothing)
+                                        es, f)
     @test isa(sReal, Scheduler{EmptyState, Real})
     @test sReal.now == 1.2
     @test isempty(sReal.event_queue)
@@ -162,4 +163,3 @@ end
     v = var(deltas)
     @test max(abs(m-0.5), abs(v-1/12)) < 0.005
 end
-

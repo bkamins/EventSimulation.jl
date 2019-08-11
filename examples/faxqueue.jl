@@ -1,5 +1,6 @@
 using EventSimulation
 using Distributions
+using Printf
 
 # flow of fax states
 # WAITING ---> ENTRY ---> MOVED ---> SPECIAL
@@ -175,5 +176,5 @@ run(16, 6, 7, 3, true)
 n = 2048
 m = mean(run(17, 7, 8, 4)[3] for i in 1:n)
 s = sqrt(m*(1-m)/n)
-l, h = m + [-2s, 2s]
+l, h = m .+ [-2s, 2s]
 @printf("\nSLA prob. (95%% CI), scenario (17,7,8,4): %6.4f (%6.4f, %6.4f)", m, l, h)
