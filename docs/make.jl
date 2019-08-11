@@ -1,5 +1,5 @@
-using Documenter
 using EventSimulation
+using Documenter
 
 makedocs()
 
