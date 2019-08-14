@@ -1,17 +1,17 @@
 name = "EventSimulation"
 uuid = "bf752c2e-6b1c-53e3-a22f-e5bb209bd3f1"
-version = "0.7.0"
+version = "0.7.1"
 
 [deps]
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [extras]
 Future = "9fa8497b-333b-5362-9e8d-4d0656e87820"
-Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Future", "Random", "Statistics", "Test"]
+test = ["Future", "Statistics", "Test"]
 
 [compat]
 julia = "1"
