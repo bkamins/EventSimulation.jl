@@ -17,8 +17,7 @@ notifications:
   email: false
 
 after_success:
-  - julia -e 'import EventSimulation; cd(dirname(pathof(EventSimulation)));
-              using Pkg; Pkg.add("Coverage"); using Coverage;
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage;
               Coveralls.submit(Coveralls.process_folder())'
 
 jobs:
