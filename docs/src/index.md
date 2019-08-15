@@ -21,10 +21,12 @@ Examples contained in `/examples/` directory:
 * `bank_renege_2.jl`: bank renege model (reimplementation of SimPy example)
 * `movie_renege.jl`: movie renege model (reimplementation of SimPy example)
 * `faxqueue.jl`: a two-stage fax queue model;
-  adaptation of Nelson (2013): *Foundations and Methods of Stochastic Simulation*,
+  adaptation of B. Nelson (2013): *Foundations and Methods of Stochastic Simulation*,
   chap. 4.6, example
 * `seq_queue.jl`: Experiment 4.1 from:
-  C.-H. Chen, L.H. Lee (2011): Stochastic Simulation Optimization
+  C.-H. Chen, L.H. Lee (2011): *Stochastic Simulation Optimization*
+* `repair.jl`: a rewrite of SimJulia.jl example of
+  S. Ross (2012): *Simulation*, 5th edition, Section 7.7, p. 124-126
 
 The models that are reimplemnetation of SimPy run an order of magnitude (>20x)
 faster than in [SimPy](https://bitbucket.org/simpy/simpy/) or

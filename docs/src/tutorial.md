@@ -170,7 +170,7 @@ end
 
 function delivery(s)
     provide!(s, s.state.good, 1.0)
-    print_with_color(:green, "Delivered 1.0 at ", s.now, "\n")
+    printstyled("Delivered 1.0 at ", s.now, "\n", color=:green)
 end
 
 function customer(s)
@@ -180,7 +180,7 @@ function customer(s)
     demand = rand()
     print("Arrived at ", round(s.now, 4), " with demand ", round(demand, 4))
     if !request!(s, s.state.good, demand, leave)[1]
-        print_with_color(:red, " but line was too long and left with nothing\n")
+        printstyled(" but line was too long and left with nothing\n", color=:red)
     else
         println(" and went into a queue")
     end
