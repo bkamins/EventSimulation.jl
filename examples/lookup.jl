@@ -1,6 +1,5 @@
 using EventSimulation
 using Distributions
-using StructArrays
 
 mutable struct Customer
     tin::Float64
@@ -12,9 +11,9 @@ mutable struct Server
     customer::Union{Customer, Nothing}
 end
 
-mutable struct State{T1, T2} <: AbstractState
-    servers::T1
-    left_customers::T2
+mutable struct State <: AbstractState
+    servers::Vector{Server}
+    left_customers::Vector{Customer}
     shortest::Bool
     ad::Exponential{Float64}
     sd::Exponential{Float64}
@@ -22,12 +21,12 @@ end
 
 function arrival(s)
     if s.state.shortest
-        qlen = [length(q.queue) for q in s.state.servers.queue]
-        idleserver = isnothing.(s.state.servers.customer)
+        qlen = [length(s.queue.queue) for s in s.state.servers]
+        idleserver = isnothing.(s.customer for s in s.state.servers)
         i = argmin(qlen .- idleserver)
-        q = s.state.servers.queue[i]
+        q = s.state.servers[i].queue
     else
-        q = rand(s.state.servers.queue)
+        q = rand(s.state.servers).queue
     end
     provide!(s, q, Customer(s.now, NaN))
 end
@@ -50,7 +49,7 @@ end
 
 function runsim(ar::Number, sr::Number, n::Integer, shortest::Bool)
     servers = [Server(SimQueue{Customer}(), nothing) for i in 1:n]
-    ss = State(StructArray(servers), StructArray(Customer[]),
+    ss = State(servers, Customer[],
                shortest, Exponential(1/ar), Exponential(1/sr))
     s = Scheduler(ss)
     repeat_register!(s, arrival, x -> rand(ss.ad))
@@ -58,9 +57,8 @@ function runsim(ar::Number, sr::Number, n::Integer, shortest::Bool)
         request!(s, server.queue, request_service(server))
     end
     go!(s, 1_000_000)
-    lc = s.state.left_customers
-    mean(lc.tout) - mean(lc.tin)
+    mean(c.tout - c.tin for c in s.state.left_customers)
 end
 
-runsim(1, 0.4, 3, true)
-runsim(1, 0.4, 3, false)
+@show runsim(1, 0.4, 3, true)
+@show runsim(1, 0.4, 3, false)
