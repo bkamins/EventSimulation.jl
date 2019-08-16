@@ -21,7 +21,7 @@ end
 
 function arrival(s)
     if s.state.shortest
-        qlen = [length(s.queue.queue) for s in s.state.servers]
+        qlen = [length(s.queue) for s in s.state.servers]
         idleserver = isnothing.(s.customer for s in s.state.servers)
         i = argmin(qlen .- idleserver)
         q = s.state.servers[i].queue
