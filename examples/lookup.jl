@@ -1,5 +1,6 @@
 using EventSimulation
 using Distributions
+using StructArrays
 
 mutable struct Customer
     tin::Float64
@@ -7,14 +8,13 @@ mutable struct Customer
 end
 
 mutable struct Server
-    id::Int
+    queue::SimQueue{Customer}
     customer::Union{Customer, Nothing}
 end
 
-mutable struct State <: AbstractState
-    queues::Vector{SimQueue{Customer}}
-    servers::Vector{Server}
-    left_customers::Vector{Customer}
+mutable struct State{T1, T2} <: AbstractState
+    servers::T1
+    left_customers::T2
     shortest::Bool
     ad::Exponential{Float64}
     sd::Exponential{Float64}
@@ -22,17 +22,17 @@ end
 
 function arrival(s)
     if s.state.shortest
-        qlen = length.(getproperty.(s.state.queues, :queue))
-        inserver = .!isnothing.(getproperty.(s.state.servers, :customer))
-        i = argmin(qlen .+ inserver)
-        q = s.state.queues[i]
+        qlen = [length(q.queue) for q in s.state.servers.queue]
+        idleserver = isnothing.(s.state.servers.customer)
+        i = argmin(qlen .- idleserver)
+        q = s.state.servers.queue[i]
     else
-        q = rand(s.state.queues)
+        q = rand(s.state.servers.queue)
     end
     provide!(s, q, Customer(s.now, NaN))
 end
 
-function request_service(s, i)
+function request_service(server)
     function start_service(s, customer)
         @assert isnothing(server.customer)
         server.customer = customer
@@ -43,24 +43,23 @@ function request_service(s, i)
         server.customer.tout = s.now
         push!(s.state.left_customers, server.customer)
         server.customer = nothing
-        request!(s, s.state.queues[i], request_service(s, i))
+        request!(s, server.queue, request_service(server))
     end
-    server = s.state.servers[i]
     start_service
 end
 
 function runsim(ar::Number, sr::Number, n::Integer, shortest::Bool)
-    ss = State([SimQueue{Customer}() for _ in 1:n],
-               [Server(i, nothing) for i in 1:n],
-               Customer[], shortest, Exponential(1/ar), Exponential(1/sr))
+    servers = [Server(SimQueue{Customer}(), nothing) for i in 1:n]
+    ss = State(StructArray(servers), StructArray(Customer[]),
+               shortest, Exponential(1/ar), Exponential(1/sr))
     s = Scheduler(ss)
     repeat_register!(s, arrival, x -> rand(ss.ad))
-    for (i, q) in enumerate(ss.queues)
-        request!(s, q, request_service(s, i))
+    for server in ss.servers
+        request!(s, server.queue, request_service(server))
     end
     go!(s, 1_000_000)
     lc = s.state.left_customers
-    mean(@. getproperty(lc, :tout) - getproperty(lc, :tin))
+    mean(lc.tout) - mean(lc.tin)
 end
 
 runsim(1, 0.4, 3, true)
