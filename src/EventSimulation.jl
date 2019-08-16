@@ -44,7 +44,6 @@ function dispatch! end
 Function used to register request for resource in `SimResource`
 or object from `SimQueue`.
 
-
 In `SimResource` requested `quantity` must be provided and
 `request` accepts only `Scheduler` argument (it must know what it wanted).
 Returns tuple of:

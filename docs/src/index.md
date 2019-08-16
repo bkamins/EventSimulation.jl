@@ -28,6 +28,7 @@ Examples contained in `/examples/` directory:
 * `repair.jl`: a rewrite of SimJulia.jl example of
   S. Ross (2012): *Simulation*, 5th edition, Section 7.7, p. 124-126
 * `computer.jl`: Example 2.5 from A. Law (2013): *Simulation Modeling and Analysis*, 5ed
+* `lookup.jl`: model with s queues and s servers with different queue choice policies
 
 The models that are reimplemnetation of SimPy run an order of magnitude (>20x)
 faster than in [SimPy](https://bitbucket.org/simpy/simpy/) or
