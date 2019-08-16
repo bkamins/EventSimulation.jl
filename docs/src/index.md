@@ -66,6 +66,7 @@ Containers
 * `provide!`: add resource/object to reservoir
   (or remove resource from `SimResource`)
 * `withdraw!`: remove object from `SimQueue`
+* `length`: number of objects in `SimQueue`
 
 Utilities
 
