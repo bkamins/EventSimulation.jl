@@ -90,4 +90,4 @@ end
 
 Returns number of objects in the queue.
 """
-function Base.length(q::SimQueue) = length(q.queue)
+Base.length(q::SimQueue) = length(q.queue)
