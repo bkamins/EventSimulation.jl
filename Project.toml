@@ -1,6 +1,6 @@
 name = "EventSimulation"
 uuid = "bf752c2e-6b1c-53e3-a22f-e5bb209bd3f1"
-version = "0.7.1"
+version = "0.7.2"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"

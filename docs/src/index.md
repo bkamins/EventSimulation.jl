@@ -15,6 +15,7 @@ Intended as a support library for teaching basic principles of Discrete Event Si
 A quick start tutorial can be found [here](@ref tutorial).
 
 Examples contained in `/examples/` directory:
+* `mm1_minimal.jl`: a minimal M/M/1 queue implementaton
 * `mms_example.jl`: comparison of several implementations of M/M/s queue
 * `mm1_example.jl`: basic implementation of M/M/1 queue with use of monitor
 * `bank_renege_1.jl`: bank renege model (reimplementation of SimPy example)
