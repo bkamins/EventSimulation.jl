@@ -32,9 +32,6 @@ anonymous function that is registered. In its body `x.now` will be taken from
 the state of the scheduler when the anonymous function is invoked but `t` is
 fixed in enclosing scope of `arrival` function as the time of the arrival.
 
-**Exercise**: *Test what happens if you replace `$t` with `$(s.now)` in the
-anonymous function. What is the reason of this behavior?*
-
 When using EventSimulation working with closures is often the simplest way
 to develop a simulation so it is important that you understand this example.
 
@@ -74,6 +71,7 @@ Now let us add a simple counter of number of customers in the system:
 
 ```
 using EventSimulation
+using Random
 
 mutable struct CounterState <: AbstractState
     count::Int
@@ -94,7 +92,7 @@ end
 
 s = Scheduler(CounterState(0))
 
-srand(1)
+Random.seed!(1)
 repeat_register!(s, arrival, x -> rand())
 go!(s, 10)
 ```
@@ -115,6 +113,7 @@ custom `monitor`.
 
 ```
 using EventSimulation
+using Random
 
 mutable struct CounterState <: AbstractState
     count::Int
@@ -139,7 +138,7 @@ end
 cs = CounterState(0, 0.0, 0.0)
 s = Scheduler(cs, Float64, monitor)
 
-srand(1)
+Random.seed!(1)
 repeat_register!(s, arrival, x -> rand())
 go!(s, 100_000)
 println("Average number of customers in a system is ",
@@ -163,6 +162,7 @@ of good every one unit of time. There are customers that arrive randomly
 and want to buy a random amount of good. Maximally two customers can wait in the line.
 ```
 using EventSimulation
+using Random
 
 mutable struct GoodState <: AbstractState
     good::SimResource{Float64}
@@ -175,10 +175,11 @@ end
 
 function customer(s)
     function leave(x)
-        println("Left at ", x.now, " with quantity ", round(demand, 4))
+        println("Left at ", x.now, " with quantity ", round(demand, digits=4))
     end
     demand = rand()
-    print("Arrived at ", round(s.now, 4), " with demand ", round(demand, 4))
+    print("Arrived at ", round(s.now, digits=4),
+          " with demand ", round(demand, digits=4))
     if !request!(s, s.state.good, demand, leave)[1]
         printstyled(" but line was too long and left with nothing\n", color=:red)
     else
@@ -187,13 +188,13 @@ function customer(s)
 end
 
 function balance(s)
-    info("Amount of good in storage: ",
-         round(s.state.good.quantity, 4), " at time ", s.now)
+    printstyled("Amount of good in storage: ", round(s.state.good.quantity, digits=4),
+                " at time ", s.now, "\n", color=:magenta)
 end
 
 s = Scheduler(GoodState(SimResource{Float64}(max_requests=2)))
 
-srand(1)
+Random.seed!(1)
 repeat_register!(s, delivery, x -> 1.0)
 repeat_register!(s, customer, x -> rand())
 repeat_register!(s, balance, x -> x.now == 0 ? 1.000001 : 1.0)
@@ -208,22 +209,23 @@ the request event executed.
 number to invoke `balance`. Rewrite the example using `PriorityTime` type in such a way
 that `balance` is invoked at integer times but with priority low enough.*
 
-## Infinite delta in `repeat_register!`
+## `Nothing` delta in `repeat_register!`
 
 In general EventSimulation does not check the values passed to the engine in order
 to maximize execution speed. The only exception is `interval` argument of
-`repeat_register` function. If it returns a value that is not finite then the repeated
+`repeat_register!` function. If it returns a value that is `nothing` then the repeated
 scheduling of events is interrupted. Here is a simple example
 
 ```
 using EventSimulation
+using Statistics
 
 mutable struct Jumps <: AbstractState
     n::Int
 end
 
 jump(s) = s.state.n+=1
-next(s) = s.now >= 1.0 ? NaN : rand()
+next(s) = s.now >= 1.0 ? nothing : rand()
 
 function main()
     s = Scheduler(Jumps(0))
@@ -238,9 +240,9 @@ println(mean(main() for i in 1:10^6))
 The above code implements a well known puzzle.
 Assume that we have a bug that gets hungry every `rand()` time units and eats then.
 Assume that the fist time it eats is 0.
-What is the expected number of times it will it till time reaches 1.0?
+What is the expected number of times it will eat till time reaches 1.0?
 Run the code to learn the answer (if you did not know the puzzle before).
-Observe that returning `NaN` from `next` forces the simulation to stop.
+Observe that returning `nothing` from `next` forces the simulation to stop.
 
 ## Bulk execution of events
 
@@ -250,6 +252,8 @@ They can be either executed in a predefined order or in random order
 
 ```
 using EventSimulation
+using Statistics
+using Random
 
 mutable struct Airplane <: AbstractState
     free::Set{Int}
@@ -278,11 +282,11 @@ end
 Another simple puzzle. We have an airplane with `n` seats and `n` customers.
 Every customer has a ticket with seat number. It is represented by a vector `tickets`.
 Customers enter the airplane in the order of the vector `tickets` and everyone tries to
-sit on her own seat. Unfortunately `tickets[1] = rand(1:n)` so the firs customer has
-forgotten her seat number and have chosen a random seat. When the following customers
+sit on ones own seat. Unfortunately `tickets[1] = rand(1:n)` so the firs customer has
+forgotten the seat number and has chosen a random seat. When the following customers
 enter the airplane and find their seat taken they pick a random free seat.
 The question is what is the probability that last customer that enters the plane finds
-her seat taken as a function of `n`.
+the seat taken as a function of `n`.
 Run the simulation to find out if you do not know the answer!
 
 ## Next steps
