@@ -52,7 +52,6 @@ s = Scheduler()
 repeat_register!(s, arrival, x -> 1.0)
 
 go!(s, 7)
-
 ```
 
 In this example we show how `arrival` function can be scheduled to be repeatedly

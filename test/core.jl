@@ -45,17 +45,17 @@ end
 @testset "Testing repeat_register!" begin
     s = Scheduler()
     rrv = []
-    f(x) = push!(rrv, x.now)
+    f1(x) = push!(rrv, x.now)
     ifun(x) = x.now + 1
-    repeat_register!(s, f, ifun)
+    repeat_register!(s, f1, ifun)
     go!(s, 50)
     @test rrv == [1,3,7,15,31]
 
     s = Scheduler()
     rrv = []
-    f(x) = push!(rrv, x.now)
+    f2(x) = push!(rrv, x.now)
     ifun2(x) = length(rrv) < 5 ? x.now + 1 : NaN
-    repeat_register!(s, f, ifun2)
+    repeat_register!(s, f2, ifun2)
     go!(s)
     @test length(rrv) == 5
 end
