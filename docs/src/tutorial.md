@@ -32,8 +32,8 @@ anonymous function that is registered. In its body `x.now` will be taken from
 the state of the scheduler when the anonymous function is invoked but `t` is
 fixed in enclosing scope of `arrival` function as the time of the arrival.
 
-When using EventSimulation working with closures is often the simplest way
-to develop a simulation so it is important that you understand this example.
+When using EventSimulation working with closures is often the simplest way to
+develop a simulation so it is important that you understand this example.
 
 ## Defining infinite source of events
 
@@ -60,8 +60,8 @@ put into event queue in time deltas defined by anonymous function `x -> 1.0`.
 Aslo observe that we have passed second argument `7` to function `go!` which
 will force unconditional termination of the simulation after this moment.
 
-**Exercise**: *Think what would happen if the termination time would be omitted in
-the expression `go!(s, 7)`. How you could use function `terminate!` inside
+**Exercise**: *Think what would happen if the termination time would be omitted
+in the expression `go!(s, 7)`. How you could use function `terminate!` inside
 definition of `arrival` to get a similar effect. What would be the difference?*
 
 ## Defining custom simulation state
@@ -101,9 +101,9 @@ and therefore they have acces to current simulation time and simulation state.
 
 Additionally we have changed customer arrival behavior to random.
 
-**Exercise**: *Try changing customer's arrival rate to the exponential distribution
-using `randexp` function. Next change time in system distribution to the
-Gamma distribution. You can find it in `Distributions` package.*
+**Exercise**: *Try changing customer's arrival rate to the exponential
+distribution using `randexp` function. Next change time in system distribution
+to the Gamma distribution. You can find it in `Distributions` package.*
 
 ## Monitoring simulation
 
@@ -145,9 +145,9 @@ println("Average number of customers in a system is ",
 ```
 
 Observe that `monitor` usually will modify simulation state to gather the
-simulation statistics. Other approaches could use global variables
-or variables defined in closure of `monitor`, but using simulation state
-is the recommended approach.
+simulation statistics. Other approaches could use global variables or variables
+defined in closure of `monitor`, but using simulation state is the recommended
+approach.
 
 **Exercise**: *Think if the obtained result is in line with
 [Little's law](https://en.wikipedia.org/wiki/Little%27s_law).
@@ -156,9 +156,9 @@ advanced exercise make `monitor` collect data only when simulation time
 is greater or equal than 100 (i.e. discarding simulation burn-in period).*
 
 ## Introduction to resources
-Now we will consider two streams of agents. Supplier provides one unit
-of good every one unit of time. There are customers that arrive randomly
-and want to buy a random amount of good. Maximally two customers can wait in the line.
+Now we will consider two streams of agents. Supplier provides one unit of good
+every one unit of time. There are customers that arrive randomly and want to buy
+a random amount of good. Maximally two customers can wait in the line.
 ```
 using EventSimulation
 using Random
@@ -204,16 +204,17 @@ Observe that fulfillment of pending requests by `SimResource` is immediate.
 This means that the amount is passed to a request from the container before
 the request event executed.
 
-**Exercise**: *We have used a fixed value of `0.000001` as an increment over an integer
-number to invoke `balance`. Rewrite the example using `PriorityTime` type in such a way
-that `balance` is invoked at integer times but with priority low enough.*
+**Exercise**: *We have used a fixed value of `0.000001` as an increment over an
+integer number to invoke `balance`. Rewrite the example using `PriorityTime`
+type in such a way that `balance` is invoked at integer times but with priority
+low enough.*
 
 ## `Nothing` delta in `repeat_register!`
 
-In general EventSimulation does not check the values passed to the engine in order
-to maximize execution speed. The only exception is `interval` argument of
-`repeat_register!` function. If it returns a value that is `nothing` then the repeated
-scheduling of events is interrupted. Here is a simple example
+In general EventSimulation does not check the values passed to the engine in
+order to maximize execution speed. The only exception is `interval` argument of
+`repeat_register!` function. If it returns a value that is `nothing` then the
+repeated scheduling of events is interrupted. Here is a simple example
 
 ```
 using EventSimulation
@@ -236,18 +237,17 @@ end
 println(mean(main() for i in 1:10^6))
 ```
 
-The above code implements a well known puzzle.
-Assume that we have a bug that gets hungry every `rand()` time units and eats then.
-Assume that the fist time it eats is 0.
-What is the expected number of times it will eat till time reaches 1.0?
-Run the code to learn the answer (if you did not know the puzzle before).
+The above code implements a well known puzzle. Assume that we have a bug that
+gets hungry every `rand()` time units and eats then. Assume that the fist time
+it eats is 0. What is the expected number of times it will eat till time reaches
+1.0? Run the code to learn the answer (if you did not know the puzzle before).
 Observe that returning `nothing` from `next` forces the simulation to stop.
 
 ## Bulk execution of events
 
-EventSimulation allows you to plan execution of a batch of actions at the same time.
-They can be either executed in a predefined order or in random order
-(this example actually does not require DES, but is a MWE of `bulk_register!`).
+EventSimulation allows you to plan execution of a batch of actions at the same
+time. They can be either executed in a predefined order or in random order (this
+example actually does not require DES, but is a MWE of `bulk_register!`).
 
 ```
 using EventSimulation
@@ -279,16 +279,16 @@ end
 ```
 
 Another simple puzzle. We have an airplane with `n` seats and `n` customers.
-Every customer has a ticket with seat number. It is represented by a vector `tickets`.
-Customers enter the airplane in the order of the vector `tickets` and everyone tries to
-sit on ones own seat. Unfortunately `tickets[1] = rand(1:n)` so the firs customer has
-forgotten the seat number and has chosen a random seat. When the following customers
-enter the airplane and find their seat taken they pick a random free seat.
-The question is what is the probability that last customer that enters the plane finds
-the seat taken as a function of `n`.
-Run the simulation to find out if you do not know the answer!
+Every customer has a ticket with seat number. It is represented by a vector
+`tickets`. Customers enter the airplane in the order of the vector `tickets` and
+everyone tries to sit on ones own seat. Unfortunately `tickets[1] = rand(1:n)`
+so the firs customer has forgotten the seat number and has chosen a random seat.
+When the following customers enter the airplane and find their seat taken they
+pick a random free seat. The question is what is the probability that last
+customer that enters the plane finds the seat taken as a function of `n`. Run
+the simulation to find out if you do not know the answer!
 
 ## Next steps
 
-This is the end of this introductory tutorial. More advanced features are covered
-in examples contained in `/examples/` directory.
+This is the end of this introductory tutorial. More advanced features are
+covered in examples contained in `/examples/` directory.
